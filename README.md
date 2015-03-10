@@ -2,6 +2,8 @@ client-side-encryption
 ==========
 Sample code for client-side encryption
 
+[![Build Status](https://travis-ci.org/Adyen/CSE-iOS.svg)](https://travis-ci.org/Adyen/CSE-iOS)
+
 JavaScript version 0_1_10
 ---
 
