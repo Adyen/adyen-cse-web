@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="css/cse-example-form.css" type="text/css" />
   </head>
   <body>
+        
         <form method="POST" action="#handler" id="adyen-encrypted-form">
             <fieldset>
                 <legend>Card Details</legend>
@@ -44,12 +45,16 @@
                 <input type="submit" value="Submit" />
             </fieldset>
         </form>
+        
 
         <!-- How to use the Adyen encryption client-side JS library -->
         <!-- N.B. Make sure the library is *NOT* loaded in the "head" of the HTML document -->
-        <script src="js/adyen.encrypt.min.js?0_1_10"></script>
-        <script>
-            // generate time client side for testing only... Don't deploy on a real integration!!!
+        <script type="text/javascript" src="js/adyen.encrypt.min.js?0_1_11"></script>
+        
+        <script type="text/javascript">
+            
+            // generate time client side for testing only... Don't deploy on a
+            // real integration!!!
             document.getElementById('adyen-encrypted-form-expiry-generationtime').value = new Date().toISOString();
         
             // the form element to encrypt
@@ -72,18 +77,27 @@
             // The submit button will be disabled when fields
             // proof to be invalid. The form submission will be
             // prevented as well.
-            // options.enableValidations = true,
+            // options.enableValidations = true;
+            
             
             // Always have the submit button enabled (default is false)
-            // Leave the submit button enabled, even in case 
+            // Leave the submit button enabled, even in case
             // of validation errors.
-            // options.submitButtonAlwaysEnabled = false,
+            // options.submitButtonAlwaysEnabled = false;
             
-            // Ignore non-numeric characters in the card number field (default is true)
-            // The payment handling ignores non-numeric characters for the card field.
-            // By default non-numeric characters will also be ignored while validating
+            // Ignore non-numeric characters in the card number field (default
+            // is true)
+            // The payment handling ignores non-numeric characters for the card
+            // field.
+            // By default non-numeric characters will also be ignored while
+            // validating
             // the card number field. This can be disabled for UX reasons.
-            // options.numberIgnoreNonNumeric = true,
+            // options.numberIgnoreNonNumeric = true;
+            
+            // Ignore CVC validations for certain bins. Supply a comma separated
+            // list.
+            // options.cvcIgnoreBins = '6703'; // Ignore CVC for BCMC
+            
             
             // Use a different attribute to identify adyen fields
             // Note that the attributes needs to start with data-.
@@ -94,7 +108,7 @@
             
             // the form will be encrypted before it is submitted
             adyen.encrypt.createEncryptedForm( form, key, options);
-
+            
         </script>
     </body>
 </html>

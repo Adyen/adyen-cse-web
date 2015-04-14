@@ -19,58 +19,17 @@
   </head>
   <body>
         
-        <form method="POST" action="#handler" id="adyen-encrypted-form">
-            <fieldset>
-                <legend>Card Details</legend>
-                <div class="field">
-                    <label for="adyen-encrypted-form-number">
-                        <span>Card Number</span>
-                        <input type="text" id="adyen-encrypted-form-number" value="5555444433331111" size="20" autocomplete="off" data-encrypted-name="number" />
-                    </label>
-                    <span id="cardType"></span>
-                </div>
-
-                <div class="field">
-                    <label for="adyen-encrypted-form-cvc">
-                        <span>CVC</span>
-                        <input type="text" id="adyen-encrypted-form-cvc" value="737" size="4" maxlength="4" autocomplete="off" data-encrypted-name="cvc" />
-                    </label>
-                </div>
-                
-                <div class="field">
-                    <label for="adyen-encrypted-form-holder-name">
-                        <span>Card Holder Name</span>
-                        <input type="text" id="adyen-encrypted-form-holder-name" value="John Doe" size="20" autocomplete="off" data-encrypted-name="holderName" />
-                    </label>
-                </div>
-                
-                <div class="field">
-                    <label for="adyen-encrypted-form-expiry-month">
-                        <span>Expiration (MM/YYYY)</span>
-                        <input type="text" value="06"   id="adyen-encrypted-form-expiry-month" maxlength="2" size="2" autocomplete="off" data-encrypted-name="expiryMonth" /> / 
-                    </label>
-                    <!-- Do not use two input elements inside a single label. This will cause focus issues on the seoncd and latter fields using the mouse in various browsers -->
-                    <input type="text" value="2016" id="adyen-encrypted-form-expiry-year" maxlength="4" size="4" autocomplete="off" data-encrypted-name="expiryYear" />
-                </div>
-
-                <input type="hidden" id="adyen-encrypted-form-expiry-generationtime" value="generate-this-server-side" data-encrypted-name="generationtime" />
-                <input type="submit" value="Submit" />
-            </fieldset>
-        </form>
+        <div id="adyen-encrypted-form">
+            <input type="button" onclick="encryptExample()" value="Encrypt" />
+            <input type="button" onclick="validateExample()" value="Validate" />
+        </div>
         
 
         <!-- How to use the Adyen encryption client-side JS library -->
         <!-- N.B. Make sure the library is *NOT* loaded in the "head" of the HTML document -->
-        <script type="text/javascript" src="js/adyen.encrypt.min.js?0_1_11"></script>
         
+        <script type="text/javascript" src="js/adyen.encrypt.nodom.min.js?0_1_11"></script>
         <script type="text/javascript">
-            
-            // generate time client side for testing only... Don't deploy on a
-            // real integration!!!
-            document.getElementById('adyen-encrypted-form-expiry-generationtime').value = new Date().toISOString();
-        
-            // the form element to encrypt
-            var form    = document.getElementById('adyen-encrypted-form');
             
             // the public key
             var key     =   "10001|80C7821C961865FB4AD23F172E220F819A5CC7B9956BC3458E2788"
@@ -91,12 +50,6 @@
             // prevented as well.
             // options.enableValidations = true;
             
-            
-            // Always have the submit button enabled (default is false)
-            // Leave the submit button enabled, even in case
-            // of validation errors.
-            // options.submitButtonAlwaysEnabled = false;
-            
             // Ignore non-numeric characters in the card number field (default
             // is true)
             // The payment handling ignores non-numeric characters for the card
@@ -111,15 +64,50 @@
             // options.cvcIgnoreBins = '6703'; // Ignore CVC for BCMC
             
             
-            // Use a different attribute to identify adyen fields
-            // Note that the attributes needs to start with data-.
-            // options.fieldNameAttribute = 'data-encrypted-name';
+            var cseInstance = adyen.encrypt.createEncryption(key, options);
             
-            // Set a element that should display the card type
-            options.cardTypeElement = document.getElementById('cardType');
+            function getEncryptedFormData(cardNumber, cvc, holderName, expiryMonth, expiryYear, generationtime) {
+                
+                var postData = {};
+                
+                var cardData = {
+                    number : cardNumber,
+                    cvc : cvc,
+                    holderName : holderName,
+                    expiryMonth : expiryMonth,
+                    expiryYear : expiryYear,
+                    generationtime : generationtime
+                };
+                
+                postData['adyen-encrypted-data'] = cseInstance.encrypt(cardData);
+                
+                return postData;
+            }
             
-            // the form will be encrypted before it is submitted
-            adyen.encrypt.createEncryptedForm( form, key, options);
+            function encryptExample() {
+                var generationTime = new Date().toISOString(); // Note:
+                                                                // Generate this
+                                                                // serverside!
+                
+                var postData = getEncryptedFormData("5555 4444 3333 1111", "737", "John Doe", "06", "2016", generationTime);
+                
+                var p = document.createElement("p");
+                
+                p.innerHTML = "Post data: " + JSON.stringify(postData);
+                
+                document.body.appendChild(p);
+            }
+            
+            function validateExample() {
+                
+                var valid = cseInstance.validate({"number": "5555 4444 3333 1111", "cvc" : "737", "month": "06", "year": "2016"});
+                
+                var p = document.createElement("p");
+                
+                p.innerHTML = "Validation response: " + JSON.stringify(valid);
+                
+                document.body.appendChild(p);
+            }
             
         </script>
     </body>
@@ -137,9 +125,6 @@
     (function(){try{var b=[new Uint8Array(1),new Uint32Array(1),new Int32Array(1)];return}catch(g){}function f(e,a){return this.slice(e,a)}function c(j,e){if(arguments.length<2){e=0}for(var a=0,h=j.length;a<h;++a,++e){this[e]=j[a]&255}}function d(e){var a;if(typeof e==="number"){a=new Array(e);for(var h=0;h<e;++h){a[h]=0}}else{a=e.slice(0)}a.subarray=f;a.buffer=a;a.byteLength=a.length;a.set=c;if(typeof e==="object"&&e.buffer){a.buffer=e.buffer}return a}try{window.Uint8Array=d}catch(g){}try{window.Uint32Array=d}catch(g){}try{window.Int32Array=d}catch(g){}})();(function(){if("btoa" in window){return}var a="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";window.btoa=function(g){var e="";var f,d;for(f=0,d=g.length;f<d;f+=3){var k=g.charCodeAt(f)&255;var j=g.charCodeAt(f+1)&255;var h=g.charCodeAt(f+2)&255;var c=k>>2,b=((k&3)<<4)|(j>>4);var m=f+1<d?((j&15)<<2)|(h>>6):64;var l=f+2<d?(h&63):64;e+=a.charAt(c)+a.charAt(b)+a.charAt(m)+a.charAt(l)}return e}})();
 
     /* For older browser make sure to include a shim for the JSON object */
-    
-    /* json2.js */
-    if(typeof JSON!=="object"){JSON={}}(function(){function f(n){return n<10?"0"+n:n}if(typeof Date.prototype.toJSON!=="function"){Date.prototype.toJSON=function(key){return isFinite(this.valueOf())?this.getUTCFullYear()+"-"+f(this.getUTCMonth()+1)+"-"+f(this.getUTCDate())+"T"+f(this.getUTCHours())+":"+f(this.getUTCMinutes())+":"+f(this.getUTCSeconds())+"Z":null};String.prototype.toJSON=Number.prototype.toJSON=Boolean.prototype.toJSON=function(key){return this.valueOf()}}var cx=/[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,escapable=/[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,gap,indent,meta={"\b":"\\b","\t":"\\t","\n":"\\n","\f":"\\f","\r":"\\r",'"':'\\"',"\\":"\\\\"},rep;function quote(string){escapable.lastIndex=0;return escapable.test(string)?'"'+string.replace(escapable,function(a){var c=meta[a];return typeof c==="string"?c:"\\u"+("0000"+a.charCodeAt(0).toString(16)).slice(-4)})+'"':'"'+string+'"'}function str(key,holder){var i,k,v,length,mind=gap,partial,value=holder[key];if(value&&typeof value==="object"&&typeof value.toJSON==="function"){value=value.toJSON(key)}if(typeof rep==="function"){value=rep.call(holder,key,value)}switch(typeof value){case"string":return quote(value);case"number":return isFinite(value)?String(value):"null";case"boolean":case"null":return String(value);case"object":if(!value){return"null"}gap+=indent;partial=[];if(Object.prototype.toString.apply(value)==="[object Array]"){length=value.length;for(i=0;i<length;i+=1){partial[i]=str(i,value)||"null"}v=partial.length===0?"[]":gap?"[\n"+gap+partial.join(",\n"+gap)+"\n"+mind+"]":"["+partial.join(",")+"]";gap=mind;return v}if(rep&&typeof rep==="object"){length=rep.length;for(i=0;i<length;i+=1){if(typeof rep[i]==="string"){k=rep[i];v=str(k,value);if(v){partial.push(quote(k)+(gap?": ":":")+v)}}}}else{for(k in value){if(Object.prototype.hasOwnProperty.call(value,k)){v=str(k,value);if(v){partial.push(quote(k)+(gap?": ":":")+v)}}}}v=partial.length===0?"{}":gap?"{\n"+gap+partial.join(",\n"+gap)+"\n"+mind+"}":"{"+partial.join(",")+"}";gap=mind;return v}}if(typeof JSON.stringify!=="function"){JSON.stringify=function(value,replacer,space){var i;gap="";indent="";if(typeof space==="number"){for(i=0;i<space;i+=1){indent+=" "}}else{if(typeof space==="string"){indent=space}}rep=replacer;if(replacer&&typeof replacer!=="function"&&(typeof replacer!=="object"||typeof replacer.length!=="number")){throw new Error("JSON.stringify")}return str("",{"":value})}}if(typeof JSON.parse!=="function"){JSON.parse=function(text,reviver){var j;function walk(holder,key){var k,v,value=holder[key];if(value&&typeof value==="object"){for(k in value){if(Object.prototype.hasOwnProperty.call(value,k)){v=walk(value,k);if(v!==undefined){value[k]=v}else{delete value[k]}}}}return reviver.call(holder,key,value)}text=String(text);cx.lastIndex=0;if(cx.test(text)){text=text.replace(cx,function(a){return"\\u"+("0000"+a.charCodeAt(0).toString(16)).slice(-4)})}if(/^[\],:{}\s]*$/.test(text.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g,"@").replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,"]").replace(/(?:^|:|,)(?:\s*\[)+/g,""))){j=eval("("+text+")");return typeof reviver==="function"?walk({"":j},""):j}throw new SyntaxError("JSON.parse")}}}());
     
 
     /* base64.js */
@@ -170,9 +155,7 @@
     var adyen = root.adyen = root.adyen || {};
 
     var encrypt = adyen.encrypt = adyen.encrypt || {
-        createEncryptedForm : function ( form, key, options ) {
-            return new EncryptedForm( form, key, options );
-        },
+        
         createEncryption : function ( key, options ) {
             return new Encryption( key, options );
         }
@@ -185,100 +168,9 @@
     }
 
     encrypt.errors = encrypt.errors || {};
-    encrypt.errors.UNABLETOBIND = 'CSEB01';
-
-    function addEvent ( element, event, callback, capture ) {
-        if ( typeof element.addEventListener === 'function' ) {
-            element.addEventListener( event, callback, capture );
-        } else if ( element.attachEvent ) {
-            element.attachEvent( 'on' + event, callback );
-        } else {
-            throw new Error( encrypt.errors.UNABLETOBIND + ": Unable to bind " + event + "-event" );
-        }
-    }
-    
-    function hasClass ( elem, className ) {
-        return elem && new RegExp( ' ' + className + ' ' ).test( ' ' + ( elem.className || '' ) + ' ' );
-    }
-
-    function addClass ( elem, className ) {
-        if ( !elem ) {
-            return;
-        }
-        if ( !hasClass( elem, className ) ) {
-            elem.className += ' ' + className;
-        }
-    }
-
-    function removeClass ( elem, className ) {
-        if ( !elem ) {
-            return;
-        }
-        var newClass = ' ' + elem.className.replace( /[\t\r\n]/g, ' ' ) + ' ';
-        if ( hasClass( elem, className ) ) {
-            while ( newClass.indexOf( ' ' + className + ' ' ) >= 0 ) {
-                newClass = newClass.replace( ' ' + className + ' ', ' ' );
-            }
-            elem.className = newClass.replace( /^\s+|\s+$/g, '' );
-        }
-    }
-
-    function getAttribute ( node, attribute, defaultValue ) {
-        if ( node && node.getAttribute ) {
-            return node.getAttribute( attribute ) || defaultValue;
-        } else {
-            return defaultValue;
-        }
-    }
     
 
     encrypt.version = '0_1_11';
-
-    
-    /*
-     * Compatibility JavaScript older than 1.8.5 (IE8, IE7)
-     * 
-     * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind
-     */
-    if ( !Function.prototype.bind ) {
-        Function.prototype.bind = function ( oThis ) {
-            if ( typeof this !== "function" ) {
-                // closest thing possible to the ECMAScript 5 internal
-                // IsCallable function
-                throw new TypeError( "Function.prototype.bind - what is trying to be bound is not callable" );
-            }
-            var aArgs = Array.prototype.slice.call( arguments, 1 ), fToBind = this, fNOP = function () {
-            }, fBound = function () {
-                return fToBind.apply( this instanceof fNOP && oThis ? this : oThis, aArgs.concat( Array.prototype.slice.call( arguments ) ) );
-            };
-
-            fNOP.prototype = this.prototype;
-            fBound.prototype = new fNOP();
-
-            return fBound;
-        };
-    }
-
-    /*
-     * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString
-     */
-    if ( !Date.prototype.toISOString ) {
-        ( function () {
-
-            function pad ( number ) {
-                if ( number < 10 ) {
-                    return '0' + number;
-                }
-                return number;
-            }
-
-            Date.prototype.toISOString = function () {
-                return this.getUTCFullYear() + '-' + pad( this.getUTCMonth() + 1 ) + '-' + pad( this.getUTCDate() ) + 'T' + pad( this.getUTCHours() ) + ':' + pad( this.getUTCMinutes() ) + ':' + pad( this.getUTCSeconds() ) + '.'
-                        + ( this.getUTCMilliseconds() / 1000 ).toFixed( 3 ).slice( 2, 5 ) + 'Z';
-            };
-
-        }() );
-    }
 
     
 
@@ -514,383 +406,6 @@
         return result;
     };
 
-    
-    validations.createChangeHandler = function ( cse, type, allowEmpty ) {
-        return function ( ev ) {
-            var node = ev.target || ev.srcElement, val = ( node || {} ).value || '', field = getAttribute( node, 'data-encrypted-name' );
-
-            if ( node.options && typeof node.selectedIndex !== 'undefined' ) {
-                val = node.options[ node.selectedIndex ].value;
-            }
-
-            if ( cse.options[ field + 'IgnoreNonNumeric' ] ) {
-                val = val.replace( /\D/g, '' );
-            }
-
-            if ( validations[ type + 'Check' ]( val ) ) {
-                cse.validity[ type ] = true;
-                removeClass( node, 'invalid-' + type );
-                addClass( node, 'valid-' + type );
-            } else {
-                cse.validity[ type ] = false;
-                addClass( node, 'invalid-' + type );
-                removeClass( node, 'valid-' + type );
-            }
-            if ( allowEmpty && val === '' ) {
-                removeClass( node, 'valid-' + type );
-                removeClass( node, 'invalid-' + type );
-            }
-
-            if ( ( node.className || '' ).match( /invalid-/ ) ) {
-                addClass( node, 'invalid' );
-            } else {
-                removeClass( node, 'invalid' );
-            }
-            cse.toggleSubmit();
-        };
-    };
-
-    var DEFAULT_FIELDNAME_ATTRIBUTE = "data-encrypted-name";
-    
-    /*
-     * @constructor EncryptedForm
-     * 
-     * @param element {DOMNode} The form element to encrypt as a DOMNode (
-     * <form> ); @param key {String} The public key used to communicate with
-     * Adyen @param [options] {Object} Options to pass to the constructor (
-     * onsubmit {Function} and name {String} )
-     * 
-     * @return form {EncryptedForm} The instance of EncryptedForm.
-     * 
-     */    
-    
-    var EncryptedForm = function ( element, key, options ) {
-
-        if ( typeof element !== 'object' || typeof element.ownerDocument !== 'object' ) {
-
-            throw new Error( 'Expected target element to be a HTML Form element' );
-        }
-
-        if ( 'form' !== ( element.nodeName || element.tagName || '' ).toLowerCase() ) {
-            throw new Error( 'Expected target element to be a HTML Form element' );
-        }
-
-        // element and public key
-        this.element = element;
-        this.key = key;
-        this.validity = {};
-        
-        // event logging
-        evLog("initializeFormCount");
-        
-        // create an empty object if options don't exist
-        this.options = options = options || {};
-
-        if ( typeof options !== 'object' ) {
-            throw new Error( 'Expected options to be an object' );
-        }
-        
-        // Defaults
-        if ( typeof options.numberIgnoreNonNumeric === "undefined" ) {
-            options.numberIgnoreNonNumeric = true;
-        }
-
-        // Validate the custom data field name
-        if ( typeof options.fieldNameAttribute !== 'string' || !options.fieldNameAttribute.match( /^data(-\w+)+$/i ) ) {
-            options.fieldNameAttribute = DEFAULT_FIELDNAME_ATTRIBUTE;
-        }
-
-        this.name = options.name || 'adyen-encrypted-data';
-        this.fieldNameAttribute = options.fieldNameAttribute || DEFAULT_FIELDNAME_ATTRIBUTE;
-        this.onsubmit = options.onsubmit || function () {
-        };
-
-        // Boot encrypion object
-        this.encryption = new Encryption( key, options );
-
-        // Binding
-        if ( this.element.addEventListener ) {
-            this.element.addEventListener( 'submit', this.handleSubmit.bind( this ), false );
-        } else if ( this.element.attachEvent ) {
-            this.element.attachEvent( 'onsubmit', this.handleSubmit.bind( this ) );
-        }
-
-        if ( options.enableValidations !== false ) {
-            this.addValidations();
-        }
-        
-        for (var i = 0, c = element.elements.length; i < c; i++) {
-            if (!element.elements[i]) {
-                continue;
-            }
-            var attr = getAttribute(element.elements[i], this.options.fieldNameAttribute);
-            if (typeof attr !== 'undefined' && attr !== null && attr !== '' ) {
-                evLog('bind', element.elements[i], attr);
-            }
-        }
-
-
-    };
-
-    EncryptedForm.prototype = {
-
-        constructor : EncryptedForm,
-
-        /*
-         * 
-         * Compatibility wrapper for lte IE8. We create the wrapper once, rather
-         * than doing the test on each childNode.
-         * 
-         * @param node {DOMNode} @param attrName {String}
-         * 
-         */
-        hasAttribute : document.documentElement.hasAttribute ? function ( node, attrName ) {
-            // Native support
-            return node.hasAttribute( attrName );
-        } : function ( node, attrName ) {
-            // IE7, IE8
-            return node.attributes && node.attributes[ attrName ];
-        },
-
-        /*
-         * 
-         * Handles a submit of the form. It creates a hidden input with the form
-         * data as serialized, encrypted JSON.
-         * 
-         * @param e {Event} The submit event to handle.
-         * 
-         */
-
-        handleSubmit : function ( e ) {
-
-            if ( this.options.enableValidations !== false ) {
-                if ( !this.isValid() ) {
-                    if ( e.preventDefault ) {
-                        e.preventDefault();
-                    }
-                    // IE7 and lower
-                    if ( window.event ) {
-                        window.event.returnValue = false;
-                    }
-                    if ( e.originalEvent ) {
-                        e.originalEvent.returnValue = false;
-                    }
-                    e.returnValue = false;
-
-                    return false;
-                }
-            }
-
-            this.createEncryptedField( this.encrypt() );
-
-            this.onsubmit( e );
-        },
-
-        /*
-         * Gets all encrypted fields from a root node ( usually the form element ).
-         * 
-         * @param node {DOMNode} The root of the form to get encrypted fields
-         * from ( i.e. querySelectorAll( '[data-encrypeted-name]' ) ). @param
-         * [fields] {Array} An array of fields ( used when recursively looking
-         * up children ).
-         * 
-         * @returns fields {Array} An array of fields with a
-         * data-encrypeted-name attribute. ( Alternatively returns a DOMNodeList ).
-         * 
-         */
-
-        getEncryptedFields : function ( node, fields ) {
-
-            if ( node.querySelectorAll ) {
-                return node.querySelectorAll( '[' + this.fieldNameAttribute + ']' );
-            }
-
-            fields = fields || [];
-
-            var children = node.children;
-            var child;
-
-            for ( var i = 0; i < children.length; i++ ) {
-                child = children[ i ];
-
-                if ( this.hasAttribute( child, this.fieldNameAttribute ) ) {
-                    fields.push( child );
-                } else {
-                    this.getEncryptedFields( child, fields );
-                }
-
-            }
-
-            return fields;
-
-        },
-
-        /*
-         * Creates JSON object
-         * 
-         * @param fields {Array} An array of fields to convert to JSON.
-         * 
-         * @return data {JSON} The data as JavaScript Object Notation
-         * 
-         */
-        toJSON : function ( fields ) {
-
-            var field, data = {}, key, value;
-
-            for ( var i = fields.length - 1; i >= 0; i-- ) {
-
-                field = fields[ i ];
-
-                field.removeAttribute( 'name' );
-                key = field.getAttribute( this.fieldNameAttribute );
-                value = field.value;
-
-                // Cater for select boxes
-                if ( field.options && typeof field.selectedIndex !== "undefined" ) {
-                    value = field.options[ field.selectedIndex ].value;
-                }
-
-                data[ key ] = value;
-
-            }
-
-            return data;
-
-        },
-
-        /*
-         * Encrypts data
-         * 
-         * @return data {String} The data in the form as encrypted and
-         * serialized JSON.
-         * 
-         */
-
-        encrypt : function () {
-
-            return this.encryption.encrypt( this.toJSON( this.getEncryptedFields( this.element ) ) );
-
-        },
-
-        /*
-         * 
-         * Creates an encrypted field.
-         * 
-         * @param data {String} The data in the form as encrypted and serialized
-         * JSON.
-         * 
-         */
-
-        createEncryptedField : function ( data ) {
-
-            var element = document.getElementById( this.name );
-
-            if ( !element ) {
-                element = document.createElement( 'input' );
-                element.type = 'hidden';
-                element.name = element.id = this.name;
-                this.element.appendChild( element );
-            }
-
-            element.setAttribute( 'value', data );
-
-        },
-
-        addValidations : function () {
-
-            var cse = this, elements = this.element.elements, c = elements.length, element, handlers = {};
-
-            for ( ; c-- > 0; ) {
-                element = elements[ c ];
-                if ( !element || !element.getAttribute ) {
-                    continue;
-                } else if ( element.getAttribute( this.fieldNameAttribute ) === 'number' ) {
-                    handlers.luhnHandler = handlers.luhnHandler || validations.createChangeHandler( cse, 'luhn', true );
-                    addEvent( element, 'change', handlers.luhnHandler, false );
-                    handlers.luhnHandler( {
-                        target : element
-                    } );
-                } else if ( element.getAttribute( this.fieldNameAttribute ) === 'cvc' ) {
-                    handlers.cvcHandler = handlers.cvcHandler || validations.createChangeHandler( cse, 'cvc', true );
-                    addEvent( element, 'change', handlers.cvcHandler, false );
-                    handlers.cvcHandler( {
-                        target : element
-                    } );
-                } else if ( element.getAttribute( this.fieldNameAttribute ) === 'expiryYear' ) {
-                    handlers.expiryYearHandler = handlers.expiryYearHandler || validations.createChangeHandler( cse, 'year', true );
-                    addEvent( element, 'change', handlers.expiryYearHandler, false );
-                    handlers.expiryYearHandler( {
-                        target : element
-                    } );
-                } else if ( element.getAttribute( this.fieldNameAttribute ) === 'expiryMonth' ) {
-                    handlers.expiryMonthHandler = handlers.expiryMonthHandler || validations.createChangeHandler( cse, 'month', true );
-                    addEvent( element, 'change', handlers.expiryMonthHandler, false );
-                    handlers.expiryMonthHandler( {
-                        target : element
-                    } );
-                }
-            }
-        },
-
-        addCardTypeDetection : function ( cardTypeElement ) {
-
-            if ( typeof adyen.CardTypeDetection === "undefined" || typeof adyen.CardTypeDetection.getHandler !== "function" ) {
-                return window.console && window.console.warn( "[CSE] Card type detection not available" );
-            }
-
-            var updateCardTypeDetection = adyen.CardTypeDetection.getHandler( cardTypeElement );
-
-            var cse = this, elements = this.element.elements, c = elements.length, element, handlers = {};
-
-            for ( ; c-- > 0; ) {
-                element = elements[ c ];
-                if ( !element || !element.getAttribute ) {
-                    continue;
-                } else if ( element.getAttribute( this.fieldNameAttribute ) === 'number' ) {
-                    addEvent( element, 'change', updateCardTypeDetection, false );
-                    addEvent( element, 'input', updateCardTypeDetection, false );
-                    addEvent( element, 'keyup', updateCardTypeDetection, false );
-                    updateCardTypeDetection( {
-                        target : element
-                    } );
-                }
-            }
-
-        },
-
-        isValid : function () {
-            var valid = true, elements = this.element.elements, enabled;
-
-            for ( var i in this.validity ) {
-                if ( this.validity.hasOwnProperty( i ) ) {
-                    valid = valid && this.validity[ i ];
-                }
-            }
-
-            return valid;
-        },
-
-        toggleSubmit : function () {
-
-            var valid = this.isValid(), elements = this.element.elements, enabled;
-
-            enabled = valid === true || ( this.options && this.options.submitButtonAlwaysEnabled === true );
-
-            for ( var c = elements.length; c-- > 0; ) {
-                if ( elements[ c ] && ( elements[ c ].type || '' ).toLowerCase() === 'submit' ) {
-                    elements[ c ].disabled = !enabled;
-                }
-            }
-
-            return valid;
-
-        },
-        
-        getVersion : function () {
-            return encrypt.version;
-        }
-
-    };
     
 
     /*
