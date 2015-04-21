@@ -7,7 +7,7 @@
  * * Stanford Javascript Crypto Library | http://crypto.stanford.edu/sjcl/
  * * JSON in JavaScript | http://www.JSON.org/
  * 
- * Version: 0_1_11
+ * Version: 0_1_12
  * Author:  ADYEN (c) 2014
 
 <!DOCTYPE html>
@@ -61,7 +61,7 @@
 
         <!-- How to use the Adyen encryption client-side JS library -->
         <!-- N.B. Make sure the library is *NOT* loaded in the "head" of the HTML document -->
-        <script type="text/javascript" src="js/adyen.encrypt.min.js?0_1_11"></script>
+        <script type="text/javascript" src="js/adyen.encrypt.min.js?0_1_12"></script>
         
         <script type="text/javascript">
             
@@ -164,7 +164,7 @@
     (function(a){var b=a.codec.bytes=a.codec.bytes||{};b.fromBits=b.fromBits||function(c){var d=[],g=a.bitArray.bitLength(c),f,e;for(f=0;f<g/8;f++){if((f&3)===0){e=c[f/4]}d.push(e>>>24);e<<=8}return d};b.toBits=b.toBits||function(c){var d=[],f,e=0;for(f=0;f<c.length;f++){e=e<<8|c[f];if((f&3)===3){d.push(e);e=0}}if(f&3){d.push(a.bitArray.partial(8*(f&3),e))}return d}}(sjcl));
     
     /* adyen.eventlog.js */
-    var evLog;(function(){function a(c,d,e,b){if(typeof c.addEventListener==="function"){c.addEventListener(d,e,b)}else{if(c.attachEvent){c.attachEvent("on"+d,e)}else{throw new Error(encrypt.errors.UNABLETOBIND+": Unable to bind "+d+"-event")}}}evLog=(function(){var b={};return function(f,e,c){if(f==="bind"){a(e,"change",function(){evLog(c+"FieldChangeCount")});a(e,"click",function(){evLog(c+"FieldClickCount")});a(e,"focus",function(){evLog(c+"FieldFocusCount")});a(e,"blur",function(){evLog(c+"FieldBlurCount")});a(e,"keypress",function(){evLog(c+"FieldKeyCount")});return}if(f==="extend"){for(var d in b){if(b.hasOwnProperty(d)){e[d]=""+b[d]}}return}if(!b.hasOwnProperty(f)){b[f]=1}else{b[f]++}}})();a(window,"focus",function(){evLog("activate")});a(window,"blur",function(){evLog("deactivate")})}());
+    var evLog;(function(){function a(c,d,e,b){if(typeof c.addEventListener==="function"){c.addEventListener(d,e,b)}else{if(c.attachEvent){c.attachEvent("on"+d,e)}else{throw new Error(encrypt.errors.UNABLETOBIND+": Unable to bind "+d+"-event")}}}evLog=evLog||(function(){var b={};return function(f,e,c){if(f==="bind"){evLog(c+"Bind");a(e,"change",function(){evLog(c+"FieldChangeCount");evLog("log",c,"ch")},true);a(e,"click",function(){evLog(c+"FieldClickCount");evLog("log",c,"cl")},true);a(e,"focus",function(){evLog(c+"FieldFocusCount");evLog("log",c,"fo")},true);a(e,"blur",function(){evLog(c+"FieldBlurCount");evLog("log",c,"bl")},true);a(e,"keyup",function(g){if(g.keyCode==16){evLog("log",c,"Su")}else{if(g.keyCode==17){evLog("log",c,"Cu")}else{if(g.keyCode==18){evLog("log",c,"Au")}}}});a(e,"keydown",function(g){evLog(c+"FieldKeyCount");switch(g&&g.keyCode){case 8:evLog("log",c,"Kb");break;case 16:evLog("log",c,"Sd");break;case 17:evLog("log",c,"Cd");break;case 18:evLog("log",c,"Ad");break;case 37:evLog("log",c,"Kl");break;case 39:evLog("log",c,"Kr");break;case 46:evLog("log",c,"Kd");break;case 32:evLog("log",c,"Ks");break;default:if(g.keyCode>=48&&g.keyCode<=57||g.keyCode>=96&&g.keyCode<=105){evLog("log",c,"KN")}else{if(g.keyCode>=65&&g.keyCode<=90){evLog("log",c,"KL")}}break}},true);return}if(f==="set"){b[e]=c;return}if(f==="log"){if(!b.hasOwnProperty(e)){b[e]=c}else{b[e]+=","+c}if(b[e].length>1500){b[e]=b[e].substring(b[e].length-1500)}return}if(f==="extend"){for(var d in b){if(b.hasOwnProperty(d)){e[d]=""+b[d]}}return}if(!b.hasOwnProperty(f)){b[f]=1}else{b[f]++}}})();a(window,"focus",function(){evLog("activate")});a(window,"blur",function(){evLog("deactivate")})}());
 
     /* adyen */
     var adyen = root.adyen = root.adyen || {};
@@ -232,7 +232,7 @@
     }
     
 
-    encrypt.version = '0_1_11';
+    encrypt.version = '0_1_12';
 
     
     /*
@@ -290,40 +290,61 @@
      * luhn check else return false. Reference:
      * http://www.ling.nwu.edu/~sburke/pub/luhn_lib.pl \
      **************************************************************************/
-    validations.luhnCheck = function () {
-        var argv = arguments;
-        var argc = arguments.length;
-
-        var CardNumber = argc > 0 ? argv[ 0 ] : this.cardnumber;
-
-        if ( isNaN( parseInt( CardNumber, 10 ) ) ) {
-            return false;
-        }
-
-        var no_digit = CardNumber.length;
-        var oddoeven = no_digit & 1;
-        var sum = 0;
+    validations.luhnCheck = (function() {
         
-        if (no_digit >= 14) {
-            evLog('luhnCount');
-        }
-
-        for ( var count = 0; count < no_digit; count++ ) {
-            var digit = parseInt( CardNumber.charAt( count ), 10 );
-            if ( ! ( ( count & 1 ) ^ oddoeven ) ) {
-                digit *= 2;
-                if ( digit > 9 )
-                    digit -= 9;
+        var luhnCache = {};
+        
+        return function () {
+            var argv = arguments;
+            var argc = arguments.length;
+    
+            var CardNumber = argc > 0 ? argv[ 0 ] : this.cardnumber;
+    
+            if ( isNaN( parseInt( CardNumber, 10 ) ) ) {
+                return false;
             }
-            sum += digit;
-        }
-
-        if ( sum % 10 === 0 ) {
-            return true;
-        } else {
-            return false;
-        }
-    };
+    
+            var no_digit = CardNumber.length;
+            var oddoeven = no_digit & 1;
+            var sum = 0;
+            
+            if (typeof luhnCache[CardNumber] === "undefined") {
+                if (no_digit >= 14) {
+                    evLog('luhnCount');
+                }
+        
+                for ( var count = 0; count < no_digit; count++ ) {
+                    var digit = parseInt( CardNumber.charAt( count ), 10 );
+                    if ( ! ( ( count & 1 ) ^ oddoeven ) ) {
+                        digit *= 2;
+                        if ( digit > 9 )
+                            digit -= 9;
+                    }
+                    sum += digit;
+                }
+        
+                if ( sum % 10 === 0 ) {
+                    evLog("luhnOkCount");
+                    luhnCache[CardNumber] = true;
+                } else {
+                    evLog("luhnFailCount");
+                    luhnCache[CardNumber] = false;
+                }
+            }
+            
+            var luhnCacheTries = 0;
+            
+            for (var i in luhnCache) {
+                if (luhnCache.hasOwnProperty(i) && i.length === no_digit) {
+                    luhnCacheTries++;
+                }
+            }
+            
+            evLog("set", "luhnSameLengthCount", luhnCacheTries );
+            
+            return luhnCache[CardNumber];
+        };
+    })();
 
     validations.cvcCheck = function ( val ) {
         return (val && val.match && val.match( /^\d{3,4}$/ )) ? true : false;
@@ -624,6 +645,7 @@
                 continue;
             }
             var attr = getAttribute(element.elements[i], this.options.fieldNameAttribute);
+            
             if (typeof attr !== 'undefined' && attr !== null && attr !== '' ) {
                 evLog('bind', element.elements[i], attr);
             }
@@ -807,24 +829,28 @@
                 } else if ( element.getAttribute( this.fieldNameAttribute ) === 'number' ) {
                     handlers.luhnHandler = handlers.luhnHandler || validations.createChangeHandler( cse, 'luhn', true );
                     addEvent( element, 'change', handlers.luhnHandler, false );
+                    addEvent( element, 'keyup',  handlers.luhnHandler, false );
                     handlers.luhnHandler( {
                         target : element
                     } );
                 } else if ( element.getAttribute( this.fieldNameAttribute ) === 'cvc' ) {
                     handlers.cvcHandler = handlers.cvcHandler || validations.createChangeHandler( cse, 'cvc', true );
                     addEvent( element, 'change', handlers.cvcHandler, false );
+                    addEvent( element, 'keyup',  handlers.cvcHandler, false );
                     handlers.cvcHandler( {
                         target : element
                     } );
                 } else if ( element.getAttribute( this.fieldNameAttribute ) === 'expiryYear' ) {
                     handlers.expiryYearHandler = handlers.expiryYearHandler || validations.createChangeHandler( cse, 'year', true );
                     addEvent( element, 'change', handlers.expiryYearHandler, false );
+                    addEvent( element, 'keyup',  handlers.expiryYearHandler, false );
                     handlers.expiryYearHandler( {
                         target : element
                     } );
                 } else if ( element.getAttribute( this.fieldNameAttribute ) === 'expiryMonth' ) {
                     handlers.expiryMonthHandler = handlers.expiryMonthHandler || validations.createChangeHandler( cse, 'month', true );
                     addEvent( element, 'change', handlers.expiryMonthHandler, false );
+                    addEvent( element, 'keyup',  handlers.expiryMonthHandler, false );
                     handlers.expiryMonthHandler( {
                         target : element
                     } );

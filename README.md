@@ -127,6 +127,13 @@ In case the HTML integration is troublesome in your setup, the library has been 
 
 # Version History
 
+JavaScript version 0_1_12
+-------
+
+* Validate onkeyup
+
+* Fix issue with event tracking
+
 JavaScript version 0_1_11
 -------
 
