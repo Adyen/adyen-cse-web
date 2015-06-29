@@ -127,6 +127,15 @@ In case the HTML integration is troublesome in your setup, the library has been 
 
 # Version History
 
+JavaScript version 0_1_13
+-------
+
+* Add validation for the card holder name
+
+* Remove window dependency from the `nodom` variant
+
+* Add `valid` class for valid fields ( can be disabled by setting `options.disabledValidClass` )
+
 JavaScript version 0_1_12
 -------
 
