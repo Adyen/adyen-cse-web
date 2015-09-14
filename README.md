@@ -127,6 +127,15 @@ In case the HTML integration is troublesome in your setup, the library has been 
 
 # Version History
 
+JavaScript version 0_1_14
+-------
+
+* Clean up inconsistencies between the nodom Encryption and the UI engine 
+
+* Only validate fields that are only there. Removing CVC from the HTML (in case of mister cash) no longer fails validation.
+
+* Don't require zero padding on the expiryMonth
+
 JavaScript version 0_1_13
 -------
 

@@ -83,7 +83,7 @@
     };
 
     adyen.CardTypeDetection = {
-        version : '0_1_13',
+        version : '0_1_14',
         getHandler : function ( cardTypeElement ) {
             return function ( ev ) {
 

@@ -7,7 +7,7 @@
  * * Stanford Javascript Crypto Library | http://crypto.stanford.edu/sjcl/
  * * JSON in JavaScript | http://www.JSON.org/
  * 
- * Version: 0_1_13
+ * Version: 0_1_14
  * Author:  ADYEN (c) 2014
 
 <!DOCTYPE html>
@@ -28,7 +28,7 @@
         <!-- How to use the Adyen encryption client-side JS library -->
         <!-- N.B. Make sure the library is *NOT* loaded in the "head" of the HTML document -->
         
-        <script type="text/javascript" src="js/adyen.encrypt.nodom.min.js?0_1_13"></script>
+        <script type="text/javascript" src="js/adyen.encrypt.nodom.min.js?0_1_14"></script>
         <script type="text/javascript">
             
             // the public key
@@ -170,7 +170,7 @@
     encrypt.errors = encrypt.errors || {};
     
 
-    encrypt.version = '0_1_13';
+    encrypt.version = '0_1_14';
 
     
 
@@ -238,6 +238,10 @@
         };
     })();
 
+    validations.numberCheck = function ( val ) {
+        return validations.luhnCheck(val);
+    };
+    
     validations.cvcCheck = function ( val ) {
         return (val && val.match && val.match( /^\d{3,4}$/ )) ? true : false;
     };
@@ -247,7 +251,10 @@
     };
 
     validations.monthCheck = function ( val ) {
-        return (val && val.match && val.match( /^\d{2}$/ ) && parseInt( val, 10 ) >= 1 && parseInt( val, 10 ) <= 12) ? true : false;
+        
+        var myVal = (val || '').replace(/^0(\d)$/, '$1');
+        
+        return (myVal.match( /^([1-9]|10|11|12)$/ ) && parseInt( myVal, 10 ) >= 1 && parseInt( myVal, 10 ) <= 12) ? true : false;
     };
     
     validations.holderNameCheck = function ( val ) {
@@ -340,10 +347,10 @@
     Encryption.prototype.encrypt = function ( data ) {
 
         var rsa, aes, cipher, keybytes, encrypted, prefix, validationObject = {
-            number : data.number,
-            cvc : data.cvc,
-            month: data.expiryMonth,
-            year : data.expiryYear
+            number : data.number || '',
+            cvc : data.cvc || '',
+            month: data.expiryMonth || '',
+            year : data.expiryYear || ''
         };
         
         if ( this.options.enableValidations !== false && this.validate(validationObject).valid === false) {
@@ -356,7 +363,7 @@
         
         rsa = this.createRSAKey();
         aes = this.createAESKey();
-
+        
         cipher = aes.encrypt( JSON.stringify( data ) );
         keybytes = sjcl.codec.bytes.fromBits( aes.key );
         encrypted = rsa.encrypt_b64( keybytes );
@@ -387,7 +394,7 @@
                             
                             var possibleOption = this.options[field + 'IgnoreFor' + relatedField] ;
                             
-                            if ( possibleOption && val && data[relatedField].match(possibleOption)) {
+                            if ( possibleOption && data[relatedField].match(possibleOption)) {
                                 shouldIgnore = true;
                             }
                         }
@@ -402,18 +409,23 @@
                     switch ( field ) {
                     case 'number':
                         result.number = validations.luhnCheck( val );
+                        result.luhn = result.number;
                         result.valid = result.valid && result.number;
                         break;
+                    case 'expiryYear':
                     case 'year':
                         result.year = validations.yearCheck( val );
+                        result.expiryYear = result.year;
                         result.valid = result.valid && result.year;
                         break;
                     case 'cvc':
                         result.cvc = validations.cvcCheck( val );
                         result.valid = result.valid && result.cvc;
                         break;
+                    case 'expiryMonth':
                     case 'month':
                         result.month = validations.monthCheck( val );
+                        result.expiryMonth = result.month;
                         result.valid = result.valid && result.month;
                         break;
                     case 'holderName':

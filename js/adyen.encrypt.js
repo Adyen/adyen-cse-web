@@ -7,7 +7,7 @@
  * * Stanford Javascript Crypto Library | http://crypto.stanford.edu/sjcl/
  * * JSON in JavaScript | http://www.JSON.org/
  * 
- * Version: 0_1_13
+ * Version: 0_1_14
  * Author:  ADYEN (c) 2014
 
 <!DOCTYPE html>
@@ -61,7 +61,7 @@
 
         <!-- How to use the Adyen encryption client-side JS library -->
         <!-- N.B. Make sure the library is *NOT* loaded in the "head" of the HTML document -->
-        <script type="text/javascript" src="js/adyen.encrypt.min.js?0_1_13"></script>
+        <script type="text/javascript" src="js/adyen.encrypt.min.js?0_1_14"></script>
         
         <script type="text/javascript">
             
@@ -232,7 +232,7 @@
     }
     
 
-    encrypt.version = '0_1_13';
+    encrypt.version = '0_1_14';
 
     
     /*
@@ -346,6 +346,10 @@
         };
     })();
 
+    validations.numberCheck = function ( val ) {
+        return validations.luhnCheck(val);
+    };
+    
     validations.cvcCheck = function ( val ) {
         return (val && val.match && val.match( /^\d{3,4}$/ )) ? true : false;
     };
@@ -355,7 +359,10 @@
     };
 
     validations.monthCheck = function ( val ) {
-        return (val && val.match && val.match( /^\d{2}$/ ) && parseInt( val, 10 ) >= 1 && parseInt( val, 10 ) <= 12) ? true : false;
+        
+        var myVal = (val || '').replace(/^0(\d)$/, '$1');
+        
+        return (myVal.match( /^([1-9]|10|11|12)$/ ) && parseInt( myVal, 10 ) >= 1 && parseInt( myVal, 10 ) <= 12) ? true : false;
     };
     
     validations.holderNameCheck = function ( val ) {
@@ -448,10 +455,10 @@
     Encryption.prototype.encrypt = function ( data ) {
 
         var rsa, aes, cipher, keybytes, encrypted, prefix, validationObject = {
-            number : data.number,
-            cvc : data.cvc,
-            month: data.expiryMonth,
-            year : data.expiryYear
+            number : data.number || '',
+            cvc : data.cvc || '',
+            month: data.expiryMonth || '',
+            year : data.expiryYear || ''
         };
         
         if ( this.options.enableValidations !== false && this.validate(validationObject).valid === false) {
@@ -464,7 +471,7 @@
         
         rsa = this.createRSAKey();
         aes = this.createAESKey();
-
+        
         cipher = aes.encrypt( JSON.stringify( data ) );
         keybytes = sjcl.codec.bytes.fromBits( aes.key );
         encrypted = rsa.encrypt_b64( keybytes );
@@ -495,7 +502,7 @@
                             
                             var possibleOption = this.options[field + 'IgnoreFor' + relatedField] ;
                             
-                            if ( possibleOption && val && data[relatedField].match(possibleOption)) {
+                            if ( possibleOption && data[relatedField].match(possibleOption)) {
                                 shouldIgnore = true;
                             }
                         }
@@ -510,18 +517,23 @@
                     switch ( field ) {
                     case 'number':
                         result.number = validations.luhnCheck( val );
+                        result.luhn = result.number;
                         result.valid = result.valid && result.number;
                         break;
+                    case 'expiryYear':
                     case 'year':
                         result.year = validations.yearCheck( val );
+                        result.expiryYear = result.year;
                         result.valid = result.valid && result.year;
                         break;
                     case 'cvc':
                         result.cvc = validations.cvcCheck( val );
                         result.valid = result.valid && result.cvc;
                         break;
+                    case 'expiryMonth':
                     case 'month':
                         result.month = validations.monthCheck( val );
+                        result.expiryMonth = result.month;
                         result.valid = result.valid && result.month;
                         break;
                     case 'holderName':
@@ -544,9 +556,9 @@
     };
 
     
-    validations.createChangeHandler = function ( cse, type, allowEmpty ) {
+    validations.createChangeHandler = function ( cse, field, allowEmpty ) {
         return function ( ev ) {
-            var node = ev.target || ev.srcElement, val = ( node || {} ).value || '', field = getAttribute( node, 'data-encrypted-name' );
+            var node = ev.target || ev.srcElement, val = ( node || {} ).value || '';
             
             var isInitializing = (typeof ev.isInitializing === "boolean" && ev.isInitializing);
             
@@ -557,25 +569,51 @@
             if ( cse.options[ field + 'IgnoreNonNumeric' ] ) {
                 val = val.replace( /\D/g, '' );
             }
-
-            if ( validations[ type + 'Check' ]( val ) ) {
-                cse.validity[ type ] = true;
-                removeClass( node, 'invalid-' + type );
-                addClass( node, 'valid-' + type );
+            
+            // Prepare to run it through the encryption engine's validation. No longer use double validation
+            var fieldData = cse.toJSON(cse.getEncryptedFields(cse.element));
+            
+            var validationData = {
+                year : fieldData.expiryYear,
+                month: fieldData.expiryMonth,
+                number : fieldData.number,
+                cvc : fieldData.cvc,
+                holderName : fieldData.holderName
+            };
+            
+            var validationResult = cse.encryption.validate(validationData);
+            
+            if ( validationResult[field] ) {
+                cse.validity[ field ] = true;
+                removeClass( node, 'invalid-' + field );
+                addClass( node, 'valid-' + field );
             } else {
-                cse.validity[ type ] = false;
+                cse.validity[ field ] = false;
                 
                 if (!isInitializing || val !== '') {
-                    addClass( node, 'invalid-' + type );
+                    addClass( node, 'invalid-' + field );
                 }
-                removeClass( node, 'valid-' + type );
-            }
-            
-            if ( allowEmpty && val === '' ) {
-                removeClass( node, 'valid-' + type );
-                removeClass( node, 'invalid-' + type );
+                removeClass( node, 'valid-' + field );
             }
 
+            // Backwards compatibility
+            cse.validity.luhn = cse.validity.number;
+            
+            if ( ( node.className || '' ).match( /invalid-number/ ) ) {
+                addClass(node, 'invalid-luhn');
+                removeClass(node, 'valid-luhn');
+            } else if ( ( node.className || '' ).match( /valid-number/ ) ) {
+                removeClass(node, 'invalid-luhn');
+                addClass(node, 'valid-luhn');
+            }
+            
+            // Continue with regular code
+            
+            if ( allowEmpty && val === '' ) {
+                removeClass( node, 'valid-' + field );
+                removeClass( node, 'invalid-' + field );
+            }
+            
             if ( ( node.className || '' ).match( /invalid-/ ) ) {
                 addClass( node, 'invalid' );
             } else {
@@ -583,12 +621,13 @@
             }
             
             if ( cse.options.disabledValidClass !== true) {
-                if ( ( node.className || '' ).match( /valid-/ ) ) {
-                    addClass( node, 'valid' );
-                } else {
+                if ( ( node.className || '' ).match( /invalid-/ ) ) {
                     removeClass( node, 'valid' );
-                }            
+                } else {
+                    addClass( node, 'valid' );
+                }
             }
+            
             cse.toggleSubmit();
         };
     };
@@ -706,7 +745,7 @@
          */
 
         handleSubmit : function ( e ) {
-
+            
             if ( this.options.enableValidations !== false ) {
                 if ( !this.isValid() ) {
                     if ( e.preventDefault ) {
@@ -724,7 +763,7 @@
                     return false;
                 }
             }
-
+            
             this.createEncryptedField( this.encrypt() );
 
             this.onsubmit( e );
@@ -797,7 +836,7 @@
                 data[ key ] = value;
 
             }
-
+            
             return data;
 
         },
@@ -849,7 +888,7 @@
                 if ( !element || !element.getAttribute ) {
                     continue;
                 } else if ( element.getAttribute( this.fieldNameAttribute ) === 'number' ) {
-                    handlers.luhnHandler = handlers.luhnHandler || validations.createChangeHandler( cse, 'luhn', true );
+                    handlers.luhnHandler = handlers.luhnHandler || validations.createChangeHandler( cse, 'number', true );
                     addEvent( element, 'change', handlers.luhnHandler, false );
                     addEvent( element, 'keyup',  handlers.luhnHandler, false );
                     addEvent( element, 'blur',   handlers.luhnHandler, false );
