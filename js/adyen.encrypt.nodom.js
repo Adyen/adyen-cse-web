@@ -7,7 +7,7 @@
  * * Stanford Javascript Crypto Library | http://crypto.stanford.edu/sjcl/
  * * JSON in JavaScript | http://www.JSON.org/
  * 
- * Version: 0_1_14
+ * Version: 0_1_15
  * Author:  ADYEN (c) 2014
 
 <!DOCTYPE html>
@@ -28,7 +28,7 @@
         <!-- How to use the Adyen encryption client-side JS library -->
         <!-- N.B. Make sure the library is *NOT* loaded in the "head" of the HTML document -->
         
-        <script type="text/javascript" src="js/adyen.encrypt.nodom.min.js?0_1_14"></script>
+        <script type="text/javascript" src="js/adyen.encrypt.nodom.min.js?0_1_15"></script>
         <script type="text/javascript">
             
             // the public key
@@ -119,7 +119,7 @@
 ( function (root, fnDefine) {
     
     // Prevent libraries to die on AMD patterns
-    var define, exports;
+    var define, exports, df = function() {return "";};
 
     /* typedarray.js */
     (function(){try{var b=[new Uint8Array(1),new Uint32Array(1),new Int32Array(1)];return}catch(g){}function f(e,a){return this.slice(e,a)}function c(j,e){if(arguments.length<2){e=0}for(var a=0,h=j.length;a<h;++a,++e){this[e]=j[a]&255}}function d(e){var a;if(typeof e==="number"){a=new Array(e);for(var h=0;h<e;++h){a[h]=0}}else{a=e.slice(0)}a.subarray=f;a.buffer=a;a.byteLength=a.length;a.set=c;if(typeof e==="object"&&e.buffer){a.buffer=e.buffer}return a}try{window.Uint8Array=d}catch(g){}try{window.Uint32Array=d}catch(g){}try{window.Int32Array=d}catch(g){}})();(function(){if("btoa" in window){return}var a="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";window.btoa=function(g){var e="";var f,d;for(f=0,d=g.length;f<d;f+=3){var k=g.charCodeAt(f)&255;var j=g.charCodeAt(f+1)&255;var h=g.charCodeAt(f+2)&255;var c=k>>2,b=((k&3)<<4)|(j>>4);var m=f+1<d?((j&15)<<2)|(h>>6):64;var l=f+2<d?(h&63):64;e+=a.charAt(c)+a.charAt(b)+a.charAt(m)+a.charAt(l)}return e}})();
@@ -149,8 +149,8 @@
     (function(a){var b=a.codec.bytes=a.codec.bytes||{};b.fromBits=b.fromBits||function(c){var d=[],g=a.bitArray.bitLength(c),f,e;for(f=0;f<g/8;f++){if((f&3)===0){e=c[f/4]}d.push(e>>>24);e<<=8}return d};b.toBits=b.toBits||function(c){var d=[],f,e=0;for(f=0;f<c.length;f++){e=e<<8|c[f];if((f&3)===3){d.push(e);e=0}}if(f&3){d.push(a.bitArray.partial(8*(f&3),e))}return d}}(sjcl));
     
     /* adyen.eventlog.js */
-    var evLog;(function(){function a(c,d,e,b){if(typeof c.addEventListener==="function"){c.addEventListener(d,e,b)}else{if(c.attachEvent){c.attachEvent("on"+d,e)}else{throw new Error(encrypt.errors.UNABLETOBIND+": Unable to bind "+d+"-event")}}}evLog=evLog||(function(){var b={};return function(f,e,c){if(f==="bind"){evLog(c+"Bind");a(e,"change",function(){evLog(c+"FieldChangeCount");evLog("log",c,"ch")},true);a(e,"click",function(){evLog(c+"FieldClickCount");evLog("log",c,"cl")},true);a(e,"focus",function(){evLog(c+"FieldFocusCount");evLog("log",c,"fo")},true);a(e,"blur",function(){evLog(c+"FieldBlurCount");evLog("log",c,"bl")},true);a(e,"keyup",function(h){if(h.keyCode==16){evLog("log",c,"Su")}else{if(h.keyCode==17){evLog("log",c,"Cu")}else{if(h.keyCode==18){evLog("log",c,"Au")}}}});a(e,"keydown",function(h){evLog(c+"FieldKeyCount");switch(h&&h.keyCode){case 8:evLog("log",c,"Kb");break;case 16:evLog("log",c,"Sd");break;case 17:evLog("log",c,"Cd");break;case 18:evLog("log",c,"Ad");break;case 37:evLog("log",c,"Kl");break;case 39:evLog("log",c,"Kr");break;case 46:evLog("log",c,"Kd");break;case 32:evLog("log",c,"Ks");break;default:if(h.keyCode>=48&&h.keyCode<=57||h.keyCode>=96&&h.keyCode<=105){evLog("log",c,"KN")}else{if(h.keyCode>=65&&h.keyCode<=90){evLog("log",c,"KL")}}break}},true);return}if(f==="set"){b[e]=c;return}if(f==="log"){var g=e+"FieldLog";if(!b.hasOwnProperty(g)){b[g]=c}else{b[g]+=","+c}if(b[g].length>1500){b[g]=b[g].substring(b[g].length-1500)}return}if(f==="extend"){for(var d in b){if(d==="number"||d==="expiryMonth"||d==="expiryYear"||d==="generationtime"||d==="holderName"||d==="cvc"){continue}if(b.hasOwnProperty(d)){e[d]=""+b[d]}}return}if(!b.hasOwnProperty(f)){b[f]=1}else{b[f]++}}})();if(window&&(window.attachEvent||window.addEventListener)){a(window,"focus",function(){evLog("activate")});a(window,"blur",function(){evLog("deactivate")})}}());
-
+    var evLog;(function(){var a=new Date().getTime();function b(d,e,f,c){if(typeof d.addEventListener==="function"){d.addEventListener(e,f,c)}else{if(d.attachEvent){d.attachEvent("on"+e,f)}else{throw new Error(encrypt.errors.UNABLETOBIND+": Unable to bind "+e+"-event")}}}evLog=evLog||(function(){var c={};return function(h,g,d){if(h==="bind"){evLog(d+"Bind");b(g,"change",function(){evLog(d+"FieldChangeCount");evLog("log",d,"ch")},true);b(g,"click",function(){evLog(d+"FieldClickCount");evLog("log",d,"cl")},true);b(g,"focus",function(){evLog(d+"FieldFocusCount");evLog("log",d,"fo")},true);b(g,"blur",function(){evLog(d+"FieldBlurCount");evLog("log",d,"bl")},true);b(g,"keyup",function(i){if(i.keyCode==16){evLog("log",d,"Su")}else{if(i.keyCode==17){evLog("log",d,"Cu")}else{if(i.keyCode==18){evLog("log",d,"Au")}}}});b(g,"keydown",function(i){evLog(d+"FieldKeyCount");switch(i&&i.keyCode){case 8:evLog("log",d,"Kb");break;case 16:evLog("log",d,"Sd");break;case 17:evLog("log",d,"Cd");break;case 18:evLog("log",d,"Ad");break;case 37:evLog("log",d,"Kl");break;case 39:evLog("log",d,"Kr");break;case 46:evLog("log",d,"Kd");break;case 32:evLog("log",d,"Ks");break;default:if(i.keyCode>=48&&i.keyCode<=57||i.keyCode>=96&&i.keyCode<=105){evLog("log",d,"KN")}else{if(i.keyCode>=65&&i.keyCode<=90){evLog("log",d,"KL")}}break}},true);return}if(h==="set"){c[g]=d;return}if(h==="log"){var j=g+"FieldLog";var e=(new Date().getTime())-a;e=Math.round(e/100);if(!c.hasOwnProperty(j)){c[j]=d+"@"+e}else{c[j]+=","+d+"@"+e}if(c[j].length>1500){c[j]=c[j].substring(c[j].length-1500);c[j]=c[j].substring(c[j].indexOf(",")+1)}return}if(h==="extend"){for(var f in c){if(f==="number"||f==="expiryMonth"||f==="expiryYear"||f==="generationtime"||f==="holderName"||f==="cvc"){continue}if(c.hasOwnProperty(f)){g[f]=""+c[f]}}return}if(!c.hasOwnProperty(h)){c[h]=1}else{c[h]++}}})();if(window&&(window.attachEvent||window.addEventListener)){b(window,"focus",function(){evLog("activate")});b(window,"blur",function(){evLog("deactivate")})}}());
+    
     /* adyen */
     var adyen = root.adyen = root.adyen || {};
 
@@ -166,11 +166,13 @@
             return encrypt;
         });
     }
+    
+        
 
     encrypt.errors = encrypt.errors || {};
     
 
-    encrypt.version = '0_1_14';
+    encrypt.version = '0_1_15';
 
     
 
@@ -237,9 +239,9 @@
             return luhnCache[CardNumber];
         };
     })();
-
+    
     validations.numberCheck = function ( val ) {
-        return validations.luhnCheck(val);
+        return ( (val || "").replace(/[^\d]/g,'').match(/^\d{10,20}$/) && validations.luhnCheck(val) ) ? true : false;
     };
     
     validations.cvcCheck = function ( val ) {
@@ -266,6 +268,11 @@
             sjcl.random.startCollectors();
         } catch ( e ) {
             // what to do?
+        }
+        try {
+            df();
+        } catch (e) {
+            
         }
 
         this.key = key;
@@ -361,6 +368,12 @@
         
         evLog('extend', data);
         
+        try {
+            data.dfValue = df();
+        } catch (e) {
+            
+        }
+        
         rsa = this.createRSAKey();
         aes = this.createAESKey();
         
@@ -368,7 +381,7 @@
         keybytes = sjcl.codec.bytes.fromBits( aes.key );
         encrypted = rsa.encrypt_b64( keybytes );
         prefix = 'adyenjs_' + encrypt.version + '$';
-
+        
         return [ prefix, encrypted, '$', cipher ].join( '' );
     };
 
@@ -408,7 +421,7 @@
 
                     switch ( field ) {
                     case 'number':
-                        result.number = validations.luhnCheck( val );
+                        result.number = validations.numberCheck( val );
                         result.luhn = result.number;
                         result.valid = result.valid && result.number;
                         break;

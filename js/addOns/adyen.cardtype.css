@@ -102,3 +102,12 @@
 #cardType.cse-cardtype-mcalphabankbonus {
     background-image: url(https://live.adyen.com/hpp/img/pm/mcalphabankbonus_tiny.png);
 }
+#cardType.cse-cardtype-karenmillen {
+    background-image: url(https://live.adyen.com/hpp/img/pm/karenmillen_tiny.png);
+}
+#cardType.cse-cardtype-oasis {
+    background-image: url(https://live.adyen.com/hpp/img/pm/oasis_tiny.png);
+}
+#cardType.cse-cardtype-warehouse {
+    background-image: url(https://live.adyen.com/hpp/img/pm/warehouse_tiny.png);
+}

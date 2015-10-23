@@ -1,6 +1,6 @@
-  # Options
+# Options
   
-  The `createEncryption ( key , `*`options`*` )` and `createEncryptedForm ( form, key, `*`options`*` )` methods currently support the following fields.
+The `createEncryption ( key , `*`options`*` )` and `createEncryptedForm ( form, key, `*`options`*` )` methods both have a `options` argument, which is a  a JavaScript object with (a selection of) the following fields:
   
 * **string `[name = 'adyen-encrypted-data'] `**
   
@@ -44,11 +44,30 @@
   
   For example `cvcIgnoreBins = '6703'`) to ignore CVC validation for BCMC.
 
-
 ## Option in createEncryptedForm()
 Supported fields: `enabledValidations`, `numberIgnoreNonNumeric`, `cvcIgnoreBins`, `submitButtonsAlwaysEnabled`, `fieldNameAttribute`, `onsubmit`
+
+*Example:*
+```Javascript
+var cseForm = createEncryptedForm ( form, key , {
+    "name" : "my-custom-name",
+    "enableValidations" : true,
+    "submitButonAlwaysEnabled": false,
+    "numberIgnoreNonNumeric" : true,
+    "fieldNameAttribute" : "data-encrypted-name",
+    "cvcIgnoreBins" = "6703"
+} );
+```
 
 When the card type detection addon is being enabled, the `cardTypeElement` option is also supported.
 
 ## Option in createEncryption()
 Currently  `enabledValidations`, `numberIgnoreNonNumeric` and `cvcIgnoreBins` are supported.
+
+```Javascript
+var cse = createEncryption ( key , {
+    "enableValidations" : true,
+    "numberIgnoreNonNumeric" : true,
+    "cvcIgnoreBins" = "6703"
+} );
+```

@@ -4,8 +4,8 @@ This repository contains sample code for adding Adyen Payments using Client-side
 
 The library currently offers two integration methods:
 
-- [HTML based integration]() in which a HTML form is enriched, encrypting data on submit
-- [JavaScript only integration]() in which data can be encrypted using a JavaScript only API.
+- [HTML based integration](#html-based-integration) in which a HTML form is enriched, encrypting data on submit
+- [JavaScript only integration](#javascript-only-integration) in which data can be encrypted using a JavaScript only API.
 
 The library currently has three inclusion / loading styling:
 - Download `adyen.encrypt.min.js`  and host it yourself. Both HTML based as JavaScript only integration is supported.
@@ -55,6 +55,8 @@ var options = {};
 // Bind encryption to the form
 adyen.encrypt.createEncryptedForm( form, key, options);
 ````
+
+See [Options](Options.md) for a full list of options.
 
 #### RequireJS
 Make sure you include requirejs or a alternative AMD module loader in your page
@@ -126,6 +128,17 @@ In case the HTML integration is troublesome in your setup, the library has been 
 
 
 # Version History
+
+JavaScript version 0_1_15
+-------
+
+* Add cardtype detection for three new card types 
+
+* Improve card type detection for dual branded cards (ELO)
+
+* Add length checks to number field validation
+
+* Add device fingerprinting as part of fraud detection
 
 JavaScript version 0_1_14
 -------
