@@ -1,0 +1,19 @@
+{
+  "name": "adyen-cse-js",
+  "version": "0.1.15",
+  "description": "Adyen javascript client-side encryption library",
+  "main": "js/adyen.encrypt.nodom.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Adyen/CSE-JS.git"
+  },
+  "keywords": [
+    "adyen",
+    "client-side encryption"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Adyen/CSE-JS/issues"
+  },
+  "homepage": "https://github.com/Adyen/CSE-JS#javascript-only-integration"
+}
