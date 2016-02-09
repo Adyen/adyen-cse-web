@@ -129,6 +129,15 @@ In case the HTML integration is troublesome in your setup, the library has been 
 
 # Version History
 
+JavaScript version 0_1_16
+-------
+
+* Update device fingerprinting to align with Adyen Hosted Payment Pages fingerprinting update
+
+* Do not validate CVC if it is not provided
+
+* Add validation for holderName
+
 JavaScript version 0_1_15
 -------
 
