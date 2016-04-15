@@ -1,6 +1,6 @@
 {
   "name": "adyen-cse-js",
-  "version": "0.1.16",
+  "version": "0.1.17",
   "description": "Adyen javascript client-side encryption library",
   "main": "js/adyen.encrypt.nodom.js",
   "repository": {

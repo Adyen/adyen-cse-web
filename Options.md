@@ -43,9 +43,15 @@ The `createEncryption ( key , `*`options`*` )` and `createEncryptedForm ( form, 
   A comma separated string of bins for which the CVC code validation should be ignored.
   
   For example `cvcIgnoreBins = '6703'`) to ignore CVC validation for BCMC.
+  
+* **string `[fourDigitCvcForBins = '34,37']`** - *since version: 0_1_17*
+
+  A comma separated string of bins for which a four digit CVC is required.
+
+  For example `fourDigitCvcForBins = '34,37'`) to require four digit CVC for Amex cards.
 
 ## Option in createEncryptedForm()
-Supported fields: `enabledValidations`, `numberIgnoreNonNumeric`, `cvcIgnoreBins`, `submitButtonsAlwaysEnabled`, `fieldNameAttribute`, `onsubmit`
+Supported fields: `enabledValidations`, `numberIgnoreNonNumeric`, `cvcIgnoreBins`, `fourDigitCvcForBins`, `submitButtonsAlwaysEnabled`, `fieldNameAttribute`, `onsubmit`
 
 *Example:*
 ```Javascript
@@ -55,19 +61,21 @@ var cseForm = createEncryptedForm ( form, key , {
     "submitButonAlwaysEnabled": false,
     "numberIgnoreNonNumeric" : true,
     "fieldNameAttribute" : "data-encrypted-name",
-    "cvcIgnoreBins" = "6703"
+    "cvcIgnoreBins" : "6703",
+    "fourDigitCvcForBins" : "34,37"
 } );
 ```
 
 When the card type detection addon is being enabled, the `cardTypeElement` option is also supported.
 
 ## Option in createEncryption()
-Currently  `enabledValidations`, `numberIgnoreNonNumeric` and `cvcIgnoreBins` are supported.
+Currently  `enabledValidations`, `numberIgnoreNonNumeric`, `fourDigitCvcForBins` and `cvcIgnoreBins` are supported.
 
 ```Javascript
 var cse = createEncryption ( key , {
     "enableValidations" : true,
     "numberIgnoreNonNumeric" : true,
-    "cvcIgnoreBins" = "6703"
+    "cvcIgnoreBins" = "6703",
+    "fourDigitCvcForBins" : "34,37"
 } );
 ```

@@ -7,7 +7,7 @@
  * * Stanford Javascript Crypto Library | http://crypto.stanford.edu/sjcl/
  * * JSON in JavaScript | http://www.JSON.org/
  * 
- * Version: 0_1_16
+ * Version: 0_1_17
  * Author:  ADYEN (c) 2014
 
 <!DOCTYPE html>
@@ -28,7 +28,7 @@
         <!-- How to use the Adyen encryption client-side JS library -->
         <!-- N.B. Make sure the library is *NOT* loaded in the "head" of the HTML document -->
         
-        <script type="text/javascript" src="js/adyen.encrypt.nodom.min.js?0_1_16"></script>
+        <script type="text/javascript" src="js/adyen.encrypt.nodom.min.js?0_1_17"></script>
         <script type="text/javascript">
             
             // the public key
@@ -62,6 +62,9 @@
             // Ignore CVC validations for certain bins. Supply a comma separated
             // list.
             // options.cvcIgnoreBins = '6703'; // Ignore CVC for BCMC
+            
+            // Use 4digit cvc for certain bins. Supply a comma separated list.
+            // options.fourDigitCvcForBins = '34,37'; // Set 4 digit CVC for Amex
             
             
             var cseInstance = adyen.encrypt.createEncryption(key, options);
@@ -172,7 +175,7 @@
     encrypt.errors = encrypt.errors || {};
     
 
-    encrypt.version = '0_1_16';
+    encrypt.version = '0_1_17';
 
     
 
@@ -288,6 +291,14 @@
             delete this.options.cvcIgnoreFornumber;
         }
         
+        if ( typeof this.options.fourDigitCvcForBins === "undefined" ) {
+            this.options.fourDigitCvcForBins = "34,37"; // Amex by default
+        }
+        
+        if ( typeof this.options.cvcLengthFornumber !== "undefined" ) {
+            delete this.options.cvcLengthFornumber;
+        }
+        
         if ( typeof this.options.cvcIgnoreBins === "string" ) {
             var binsToIgnore = [];
             this.options.cvcIgnoreBins.replace(/\d+/g, function(m) {
@@ -304,6 +315,28 @@
         } else if (typeof this.options.cvcIgnoreBins !== "undefined" ) {
             delete this.options.cvcIgnoreBins;
         }
+        
+        if (typeof this.options.fourDigitCvcForBins === "string") {
+            
+            var cvcGroups = [];
+            
+            this.options.fourDigitCvcForBins.replace(/\d+/g, function(m) {
+                if (m.length > 0 && !isNaN(parseInt(m, 10))) {
+                    cvcGroups.push(m);
+                }
+                return m;
+            });
+            
+            if (cvcGroups.length > 0) {
+                this.options.cvcLengthFornumber = {
+                    matcher : new RegExp("^\\s*(" + cvcGroups.join("|") + ")"),
+                    requiredLength : 4
+                }
+            }
+            
+        }
+        
+        delete this.options.fourDigitCvcForBins;
         
         evLog("initializeCount");
     };
@@ -411,25 +444,32 @@
                         val = val.replace( /\D/g, '' );
                     }
                     
-                    var shouldIgnore = false;
-                    
                     for ( var relatedField in data ) {
                         if ( data.hasOwnProperty(relatedField) ) {
                             
                             var possibleOption = this.options[field + 'IgnoreFor' + relatedField] ;
+                            var lengthOption = this.options[field + 'LengthFor' + relatedField];
                             
                             if ( possibleOption && data[relatedField].match(possibleOption)) {
-                                shouldIgnore = true;
+                                result[field] = true;
+                                continue;
+                            } else if (lengthOption && lengthOption.matcher && lengthOption.requiredLength && data[relatedField].match(lengthOption.matcher)) {
+                                if (val.length !== lengthOption.requiredLength ) {
+                                    result[field] = false;
+                                    continue;
+                                }
                             }
+                            
                         }
                     }
-                    
-                    if (shouldIgnore) {
-                        result[field] = true;
+
+                    // above checks are used as filters. If they set a result
+                    // other checks are irrelevant
+                    if (result.hasOwnProperty(field)) {
                         result.valid = result.valid && result[field];
                         continue;
                     }
-
+                    
                     switch ( field ) {
                     case 'number':
                         result.number = validations.numberCheck( val );

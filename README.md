@@ -129,6 +129,11 @@ In case the HTML integration is troublesome in your setup, the library has been 
 
 # Version History
 
+JavaScript version 0_1_17
+-------
+
+* Add the fourDigitCvcForBins option to validate 4 digit are used for the CVC field on selected bins. The default value is '34,37' for the amex bins.
+
 JavaScript version 0_1_16
 -------
 
