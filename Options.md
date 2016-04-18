@@ -51,14 +51,14 @@ The `createEncryption ( key , `*`options`*` )` and `createEncryptedForm ( form, 
   For example `fourDigitCvcForBins = '34,37'`) to require four digit CVC for Amex cards.
 
 ## Option in createEncryptedForm()
-Supported fields: `enabledValidations`, `numberIgnoreNonNumeric`, `cvcIgnoreBins`, `fourDigitCvcForBins`, `submitButtonsAlwaysEnabled`, `fieldNameAttribute`, `onsubmit`
+Supported fields: `enabledValidations`, `numberIgnoreNonNumeric`, `cvcIgnoreBins`, `fourDigitCvcForBins`, `submitButtonAlwaysEnabled`, `fieldNameAttribute`, `onsubmit`
 
 *Example:*
 ```Javascript
 var cseForm = createEncryptedForm ( form, key , {
     "name" : "my-custom-name",
     "enableValidations" : true,
-    "submitButonAlwaysEnabled": false,
+    "submitButtonAlwaysEnabled": false,
     "numberIgnoreNonNumeric" : true,
     "fieldNameAttribute" : "data-encrypted-name",
     "cvcIgnoreBins" : "6703",
