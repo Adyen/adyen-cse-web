@@ -392,7 +392,9 @@
     };
 
     validations.yearCheck = function ( val ) {
-        return (val && val.match && val.match( /^\d{4}$/ )) ? true : false;
+        var currentYear = (new Date()).getFullYear();
+      
+        return (val && val.match && val.match( /^\d{4}$/ ) && parseInt ( val, 10 ) >= currentYear) ? true : false;
     };
 
     validations.monthCheck = function ( val ) {
