@@ -397,7 +397,7 @@
         if (typeof data.expiryMonth !== "undefined") {
             validationObject.month = data.expiryMonth;
         }
-        if (typeof data.expiryMonth !== "undefined") {
+        if (typeof data.expiryYear !== "undefined") {
             validationObject.year = data.expiryYear;
         }
         if (typeof data.holderName !== "undefined") {
