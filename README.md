@@ -126,6 +126,25 @@ In case the HTML integration is troublesome in your setup, the library has been 
 </script>
 ````
 
+#### Node module
+
+Add to your `package.json`:
+```
+"dependencies": {
+  "adyen-cse-js": "git+https://github.com/Adyen/CSE-JS.git#v0.1.XX"
+}
+```
+
+Then run `npm install`.
+
+Now you can use adyen as a regular npm package:
+
+```js
+var adyenEncrypt = require('adyen-cse-js');
+
+var cseInstance = adyenEncrypt.createEncryption(key, options);
+```
+
 
 # Version History
 
