@@ -168,7 +168,7 @@
         fnDefine('adyen/encrypt', [], function() {
             return encrypt;
         });
-    } else if (module && module.exports) {
+    } else if (typeof module !== 'undefined' && module.exports) {
       module.exports = encrypt;
     }
     
