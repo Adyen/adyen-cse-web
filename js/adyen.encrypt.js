@@ -7,7 +7,7 @@
  * * Stanford Javascript Crypto Library | http://crypto.stanford.edu/sjcl/
  * * JSON in JavaScript | http://www.JSON.org/
  * 
- * Version: 0_1_17
+ * Version: 0_1_18
  * Author:  ADYEN (c) 2014
 
 <!DOCTYPE html>
@@ -16,6 +16,7 @@
     <title>Example Payment Form</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <link rel="stylesheet" href="css/cse-example-form.css" type="text/css" />
+    <!-- <link rel="stylesheet" href="css/adyen.cardtype.css" type="text/css" /> -->
   </head>
   <body>
         
@@ -61,7 +62,8 @@
 
         <!-- How to use the Adyen encryption client-side JS library -->
         <!-- N.B. Make sure the library is *NOT* loaded in the "head" of the HTML document -->
-        <script type="text/javascript" src="js/adyen.encrypt.min.js?0_1_17"></script>
+        <script type="text/javascript" src="js/adyen.encrypt.min.js?0_1_18"></script>
+        <!-- <script type="text/javascript" src="js/addOns/adyen.cardtype.min.js?0_1_18"></script>--> 
         
         <script type="text/javascript">
             
@@ -122,7 +124,10 @@
             options.cardTypeElement = document.getElementById('cardType');
             
             // the form will be encrypted before it is submitted
-            adyen.encrypt.createEncryptedForm( form, key, options);
+            var encryptedForm = adyen.encrypt.createEncryptedForm( form, key, options);
+            
+            // encryptedForm.addCardTypeDetection(options.cardTypeElement)
+            
             
         </script>
     </body>
@@ -185,6 +190,8 @@
         fnDefine('adyen/encrypt', [], function() {
             return encrypt;
         });
+    } else if (typeof module !== 'undefined' && module.exports) {
+        module.exports = encrypt;
     }
     
     
@@ -269,7 +276,7 @@
     }
     
 
-    encrypt.version = '0_1_17';
+    encrypt.version = '0_1_18';
 
     
     /*
@@ -392,7 +399,14 @@
     };
 
     validations.yearCheck = function ( val ) {
-        return (val && val.match && val.match( /^\d{4}$/ )) ? true : false;
+        
+        if (!val || !val.match || !val.match(/^2\d{3}$/)) {
+            return false;
+        }
+
+        var year = parseInt(val, 10), currentYear = (new Date()).getFullYear();
+    
+        return year >= currentYear - 2 && year <= currentYear + 15;
     };
 
     validations.monthCheck = function ( val ) {
@@ -537,7 +551,7 @@
         if (typeof data.expiryMonth !== "undefined") {
             validationObject.month = data.expiryMonth;
         }
-        if (typeof data.expiryMonth !== "undefined") {
+        if (typeof data.expiryYear !== "undefined") {
             validationObject.year = data.expiryYear;
         }
         if (typeof data.holderName !== "undefined") {
@@ -574,86 +588,90 @@
 
         result.valid = true;
 
-        if ( typeof data === "object" ) {
-            for ( var field in data ) {
-                if ( data.hasOwnProperty( field ) ) {
+        if ( typeof data !== "object" ) {
+            result.valid = false;
+            return result;
+        }
+        
+        for ( var field in data ) {
+            
+            if ( !data.hasOwnProperty( field ) || typeof data[field] === "undefined" ) {
+                continue;
+            }
 
-                    var val = data[ field ];
+            var val = data[ field ];
 
-                    if ( this.options[ field + 'IgnoreNonNumeric' ] ) {
-                        val = val.replace( /\D/g, '' );
-                    }
+            if ( this.options[ field + 'IgnoreNonNumeric' ] ) {
+                val = val.replace( /\D/g, '' );
+            }
+            
+            for ( var relatedField in data ) {
+                if ( data.hasOwnProperty(relatedField) ) {
                     
-                    for ( var relatedField in data ) {
-                        if ( data.hasOwnProperty(relatedField) ) {
-                            
-                            var possibleOption = this.options[field + 'IgnoreFor' + relatedField] ;
-                            var lengthOption = this.options[field + 'LengthFor' + relatedField];
-                            
-                            if ( possibleOption && data[relatedField].match(possibleOption)) {
-                                result[field] = true;
-                                continue;
-                            } else if (lengthOption && lengthOption.matcher && lengthOption.requiredLength && data[relatedField].match(lengthOption.matcher)) {
-                                if (val.length !== lengthOption.requiredLength ) {
-                                    result[field] = false;
-                                    continue;
-                                }
-                            }
-                            
+                    var possibleOption = this.options[field + 'IgnoreFor' + relatedField] ;
+                    var lengthOption = this.options[field + 'LengthFor' + relatedField];
+                    
+                    if ( possibleOption && data[relatedField].match(possibleOption)) {
+                        result[field] = true;
+                        continue;
+                    } else if (lengthOption && lengthOption.matcher && lengthOption.requiredLength && data[relatedField].match(lengthOption.matcher)) {
+                        if (val.length !== lengthOption.requiredLength ) {
+                            result[field] = false;
+                            continue;
                         }
                     }
-
-                    // above checks are used as filters. If they set a result
-                    // other checks are irrelevant
-                    if (result.hasOwnProperty(field)) {
-                        result.valid = result.valid && result[field];
-                        continue;
-                    }
                     
-                    switch ( field ) {
-                    case 'number':
-                        result.number = validations.numberCheck( val );
-                        result.luhn = result.number;
-                        result.valid = result.valid && result.number;
-                        break;
-                    case 'expiryYear':
-                    case 'year':
-                        result.year = validations.yearCheck( val );
-                        result.expiryYear = result.year;
-                        result.valid = result.valid && result.year;
-                        break;
-                    case 'cvc':
-                        result.cvc = validations.cvcCheck( val );
-                        result.valid = result.valid && result.cvc;
-                        break;
-                    case 'expiryMonth':
-                    case 'month':
-                        result.month = validations.monthCheck( val );
-                        result.expiryMonth = result.month;
-                        result.valid = result.valid && result.month;
-                        break;
-                    case 'holderName':
-                        result.holderName = validations.holderNameCheck(val)
-                        result.valid = result.valid && result.holderName;
-                        break;
-                    default:
-                        result.unknown = result.unknown || [];
-                        result.unknown.push( field );
-                        result.valid = false;
-                    }
-
                 }
             }
-        } else {
-            result.valid = false;
+            
+            // above checks are used as filters. If they set a result
+            // other checks are irrelevant
+            if (result.hasOwnProperty(field)) {
+                result.valid = result.valid && result[field];
+                continue;
+            }
+            
+            switch ( field ) {
+            case 'number':
+                result.number = validations.numberCheck( val );
+                result.luhn = result.number;
+                result.valid = result.valid && result.number;
+                break;
+            case 'expiryYear':
+            case 'year':
+                result.year = validations.yearCheck( val );
+                result.expiryYear = result.year;
+                result.valid = result.valid && result.year;
+                break;
+            case 'cvc':
+                result.cvc = validations.cvcCheck( val );
+                result.valid = result.valid && result.cvc;
+                break;
+            case 'expiryMonth':
+            case 'month':
+                result.month = validations.monthCheck( val );
+                result.expiryMonth = result.month;
+                result.valid = result.valid && result.month;
+                break;
+            case 'holderName':
+                result.holderName = validations.holderNameCheck(val)
+                result.valid = result.valid && result.holderName;
+                break;
+            default:
+                result.unknown = result.unknown || [];
+                result.unknown.push( field );
+                result.valid = false;
+            }
         }
-
+        
         return result;
     };
 
     
     validations.createChangeHandler = function ( cse, field, allowEmpty ) {
-        return function ( ev ) {
+        var ceConfig = { chained: false };
+        
+        var ce = function ( ev ) {
             var node = ev.target || ev.srcElement, val = ( node || {} ).value || '';
             
             var isInitializing = (typeof ev.isInitializing === "boolean" && ev.isInitializing);
@@ -679,13 +697,16 @@
             
             var validationResult = cse.encryption.validate(validationData);
             
-            if ( validationResult[field] ) {
-                cse.validity[ field ] = true;
+            for (var i in validationResult) {
+                if (validationResult.hasOwnProperty(i)) {
+                    cse.validity[i] = validationResult[i];
+                }
+            }
+            
+            if ( cse.validity[field] ) {
                 removeClass( node, 'invalid-' + field );
                 addClass( node, 'valid-' + field );
             } else {
-                cse.validity[ field ] = false;
-                
                 if (!isInitializing || val !== '') {
                     addClass( node, 'invalid-' + field );
                 }
@@ -724,8 +745,18 @@
                 }
             }
             
-            cse.toggleSubmit();
+            if (typeof ceConfig.chained === 'function') {
+                ceConfig.chained(ev);
+            } else if (!isInitializing ) {
+                cse.toggleSubmit();
+            }
         };
+        
+        ce.chain = function(handler) {
+            ceConfig.chained = handler;
+        }
+        
+        return ce;
     };
 
     var DEFAULT_FIELDNAME_ATTRIBUTE = "data-encrypted-name";
@@ -979,13 +1010,19 @@
         
         addValidations : function () {
 
-            var cse = this, elements = this.element.elements, c = elements.length, element, handlers = {};
+            var cse = this, elements = this.element.elements, c = elements.length, element, handlers = {}, elementsByName = {};
 
             for ( ; c-- > 0; ) {
                 element = elements[ c ];
                 if ( !element || !element.getAttribute ) {
                     continue;
-                } else if ( element.getAttribute( this.fieldNameAttribute ) === 'number' ) {
+                }
+                
+                var fieldName = element.getAttribute( this.fieldNameAttribute );
+                
+                elementsByName[fieldName] = element;
+                
+                if ( fieldName === 'number' ) {
                     handlers.luhnHandler = handlers.luhnHandler || validations.createChangeHandler( cse, 'number', true );
                     addEvent( element, 'change', handlers.luhnHandler, false );
                     addEvent( element, 'keyup',  handlers.luhnHandler, false );
@@ -994,7 +1031,7 @@
                         target : element,
                         isInitializing : true
                     } );
-                } else if ( element.getAttribute( this.fieldNameAttribute ) === 'cvc' ) {
+                } else if ( fieldName === 'cvc' ) {
                     handlers.cvcHandler = handlers.cvcHandler || validations.createChangeHandler( cse, 'cvc', true );
                     addEvent( element, 'change', handlers.cvcHandler, false );
                     addEvent( element, 'keyup',  handlers.cvcHandler, false );
@@ -1003,7 +1040,7 @@
                         target : element,
                         isInitializing : true
                     } );
-                } else if ( element.getAttribute( this.fieldNameAttribute ) === 'expiryYear' ) {
+                } else if ( fieldName === 'expiryYear' ) {
                     handlers.expiryYearHandler = handlers.expiryYearHandler || validations.createChangeHandler( cse, 'year', true );
                     addEvent( element, 'change', handlers.expiryYearHandler, false );
                     addEvent( element, 'keyup',  handlers.expiryYearHandler, false );
@@ -1012,7 +1049,7 @@
                         target : element,
                         isInitializing : true
                     } );
-                } else if ( element.getAttribute( this.fieldNameAttribute ) === 'expiryMonth' ) {
+                } else if ( fieldName === 'expiryMonth' ) {
                     handlers.expiryMonthHandler = handlers.expiryMonthHandler || validations.createChangeHandler( cse, 'month', true );
                     addEvent( element, 'change', handlers.expiryMonthHandler, false );
                     addEvent( element, 'keyup',  handlers.expiryMonthHandler, false );
@@ -1021,7 +1058,7 @@
                         target : element,
                         isInitializing : true
                     } );
-                } else if ( element.getAttribute( this.fieldNameAttribute ) === 'holderName' ) {
+                } else if ( fieldName === 'holderName' ) {
                     handlers.holderNameHandler = handlers.holderNameHandler || validations.createChangeHandler( cse, 'holderName', false );
                     addEvent( element, 'change', handlers.holderNameHandler, false );
                     addEvent( element, 'keyup',  handlers.holderNameHandler, false );
@@ -1031,6 +1068,12 @@
                         isInitializing : true
                     } );
                 }
+            }
+            
+            if (handlers.luhnHandler && handlers.cvcHandler && elementsByName.number && elementsByName.cvc) {
+                handlers.luhnHandler.chain(function(ev) {
+                    handlers.cvcHandler({target:elementsByName.cvc, originalEvent: ev, type : (ev|{}).type, isInitializing : (ev||{}).isInitializing})
+                });
             }
         },
 
@@ -1090,6 +1133,17 @@
             for ( var c = elements.length; c-- > 0; ) {
                 if ( elements[ c ] && ( elements[ c ].type || '' ).toLowerCase() === 'submit' ) {
                     elements[ c ].disabled = !enabled;
+                }
+            }
+            
+            if ( typeof this.options.onvalidate === "function" ) {
+                try {
+                    this.options.onvalidate(this.validity);
+                } catch (e) {
+                    if (window.console && window.console.warn && window.console.log) {
+                        console.warn("[CSE] Error in custom validationComplete handler");
+                        console.log("Caught error was ", e);
+                    }
                 }
             }
 

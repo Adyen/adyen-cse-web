@@ -7,7 +7,7 @@
  * * Stanford Javascript Crypto Library | http://crypto.stanford.edu/sjcl/
  * * JSON in JavaScript | http://www.JSON.org/
  * 
- * Version: 0_1_17
+ * Version: 0_1_18
  * Author:  ADYEN (c) 2014
 
 <!DOCTYPE html>
@@ -16,6 +16,7 @@
     <title>Example Payment Form</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <link rel="stylesheet" href="css/cse-example-form.css" type="text/css" />
+    
   </head>
   <body>
         
@@ -28,7 +29,8 @@
         <!-- How to use the Adyen encryption client-side JS library -->
         <!-- N.B. Make sure the library is *NOT* loaded in the "head" of the HTML document -->
         
-        <script type="text/javascript" src="js/adyen.encrypt.nodom.min.js?0_1_17"></script>
+        
+        <script type="text/javascript" src="js/adyen.encrypt.nodom.min.js?0_1_18"></script>
         <script type="text/javascript">
             
             // the public key
@@ -169,7 +171,7 @@
             return encrypt;
         });
     } else if (typeof module !== 'undefined' && module.exports) {
-      module.exports = encrypt;
+        module.exports = encrypt;
     }
     
         
@@ -177,7 +179,7 @@
     encrypt.errors = encrypt.errors || {};
     
 
-    encrypt.version = '0_1_17';
+    encrypt.version = '0_1_18';
 
     
 
@@ -254,7 +256,14 @@
     };
 
     validations.yearCheck = function ( val ) {
-        return (val && val.match && val.match( /^\d{4}$/ )) ? true : false;
+        
+        if (!val || !val.match || !val.match(/^2\d{3}$/)) {
+            return false;
+        }
+
+        var year = parseInt(val, 10), currentYear = (new Date()).getFullYear();
+    
+        return year >= currentYear - 2 && year <= currentYear + 15;
     };
 
     validations.monthCheck = function ( val ) {
@@ -436,80 +445,82 @@
 
         result.valid = true;
 
-        if ( typeof data === "object" ) {
-            for ( var field in data ) {
-                if ( data.hasOwnProperty( field ) ) {
+        if ( typeof data !== "object" ) {
+            result.valid = false;
+            return result;
+        }
+        
+        for ( var field in data ) {
+            
+            if ( !data.hasOwnProperty( field ) || typeof data[field] === "undefined" ) {
+                continue;
+            }
 
-                    var val = data[ field ];
+            var val = data[ field ];
 
-                    if ( this.options[ field + 'IgnoreNonNumeric' ] ) {
-                        val = val.replace( /\D/g, '' );
-                    }
+            if ( this.options[ field + 'IgnoreNonNumeric' ] ) {
+                val = val.replace( /\D/g, '' );
+            }
+            
+            for ( var relatedField in data ) {
+                if ( data.hasOwnProperty(relatedField) ) {
                     
-                    for ( var relatedField in data ) {
-                        if ( data.hasOwnProperty(relatedField) ) {
-                            
-                            var possibleOption = this.options[field + 'IgnoreFor' + relatedField] ;
-                            var lengthOption = this.options[field + 'LengthFor' + relatedField];
-                            
-                            if ( possibleOption && data[relatedField].match(possibleOption)) {
-                                result[field] = true;
-                                continue;
-                            } else if (lengthOption && lengthOption.matcher && lengthOption.requiredLength && data[relatedField].match(lengthOption.matcher)) {
-                                if (val.length !== lengthOption.requiredLength ) {
-                                    result[field] = false;
-                                    continue;
-                                }
-                            }
-                            
+                    var possibleOption = this.options[field + 'IgnoreFor' + relatedField] ;
+                    var lengthOption = this.options[field + 'LengthFor' + relatedField];
+                    
+                    if ( possibleOption && data[relatedField].match(possibleOption)) {
+                        result[field] = true;
+                        continue;
+                    } else if (lengthOption && lengthOption.matcher && lengthOption.requiredLength && data[relatedField].match(lengthOption.matcher)) {
+                        if (val.length !== lengthOption.requiredLength ) {
+                            result[field] = false;
+                            continue;
                         }
                     }
-
-                    // above checks are used as filters. If they set a result
-                    // other checks are irrelevant
-                    if (result.hasOwnProperty(field)) {
-                        result.valid = result.valid && result[field];
-                        continue;
-                    }
                     
-                    switch ( field ) {
-                    case 'number':
-                        result.number = validations.numberCheck( val );
-                        result.luhn = result.number;
-                        result.valid = result.valid && result.number;
-                        break;
-                    case 'expiryYear':
-                    case 'year':
-                        result.year = validations.yearCheck( val );
-                        result.expiryYear = result.year;
-                        result.valid = result.valid && result.year;
-                        break;
-                    case 'cvc':
-                        result.cvc = validations.cvcCheck( val );
-                        result.valid = result.valid && result.cvc;
-                        break;
-                    case 'expiryMonth':
-                    case 'month':
-                        result.month = validations.monthCheck( val );
-                        result.expiryMonth = result.month;
-                        result.valid = result.valid && result.month;
-                        break;
-                    case 'holderName':
-                        result.holderName = validations.holderNameCheck(val)
-                        result.valid = result.valid && result.holderName;
-                        break;
-                    default:
-                        result.unknown = result.unknown || [];
-                        result.unknown.push( field );
-                        result.valid = false;
-                    }
-
                 }
             }
-        } else {
-            result.valid = false;
+            
+            // above checks are used as filters. If they set a result
+            // other checks are irrelevant
+            if (result.hasOwnProperty(field)) {
+                result.valid = result.valid && result[field];
+                continue;
+            }
+            
+            switch ( field ) {
+            case 'number':
+                result.number = validations.numberCheck( val );
+                result.luhn = result.number;
+                result.valid = result.valid && result.number;
+                break;
+            case 'expiryYear':
+            case 'year':
+                result.year = validations.yearCheck( val );
+                result.expiryYear = result.year;
+                result.valid = result.valid && result.year;
+                break;
+            case 'cvc':
+                result.cvc = validations.cvcCheck( val );
+                result.valid = result.valid && result.cvc;
+                break;
+            case 'expiryMonth':
+            case 'month':
+                result.month = validations.monthCheck( val );
+                result.expiryMonth = result.month;
+                result.valid = result.valid && result.month;
+                break;
+            case 'holderName':
+                result.holderName = validations.holderNameCheck(val)
+                result.valid = result.valid && result.holderName;
+                break;
+            default:
+                result.unknown = result.unknown || [];
+                result.unknown.push( field );
+                result.valid = false;
+            }
         }
-
+        
         return result;
     };
 

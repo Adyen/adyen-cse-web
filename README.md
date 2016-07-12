@@ -145,8 +145,16 @@ var adyenEncrypt = require('adyen-cse-js');
 var cseInstance = adyenEncrypt.createEncryption(key, options);
 ```
 
-
 # Version History
+
+JavaScript version 0_1_18
+-------
+
+* Adjust expiryYear validation to require [-2, + 15] year range
+
+* Add `onvalidate` callback which is triggered after CSE has completed the form validation.
+
+* Merge pull requests #22 and #17
 
 JavaScript version 0_1_17
 -------

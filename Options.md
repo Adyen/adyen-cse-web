@@ -33,6 +33,12 @@ The `createEncryption ( key , `*`options`*` )` and `createEncryptedForm ( form, 
   Custom handler to be called on submit of the form.
   
   The callback function will be executed after encryption has taken place, and will receive the original submit event as it's first argument.
+
+* **function `[onvalidate]`**
+
+  Handler to be called after on validation of the form. 
+  
+  The callback function will be execyted after the validation routine of the CSE form has been completed and will receive the validaty status of the form as it's first argument.
   
 * **HTMLElement `[cardTypeElement]`**
 
@@ -49,9 +55,11 @@ The `createEncryption ( key , `*`options`*` )` and `createEncryptedForm ( form, 
   A comma separated string of bins for which a four digit CVC is required.
 
   For example `fourDigitCvcForBins = '34,37'`) to require four digit CVC for Amex cards.
+  
+  When no value is supplied, the default of '34,37' will be used.
 
 ## Option in createEncryptedForm()
-Supported fields: `enabledValidations`, `numberIgnoreNonNumeric`, `cvcIgnoreBins`, `fourDigitCvcForBins`, `submitButtonAlwaysEnabled`, `fieldNameAttribute`, `onsubmit`
+Supported fields: `enabledValidations`, `numberIgnoreNonNumeric`, `cvcIgnoreBins`, `fourDigitCvcForBins`, `submitButtonAlwaysEnabled`, `fieldNameAttribute`, `onsubmit`, `onvalidate`
 
 *Example:*
 ```Javascript

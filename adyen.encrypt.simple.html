@@ -4,6 +4,7 @@
     <title>Example Payment Form</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <link rel="stylesheet" href="css/cse-example-form.css" type="text/css" />
+    <!-- <link rel="stylesheet" href="css/adyen.cardtype.css" type="text/css" /> -->
   </head>
   <body>
         
@@ -49,7 +50,8 @@
 
         <!-- How to use the Adyen encryption client-side JS library -->
         <!-- N.B. Make sure the library is *NOT* loaded in the "head" of the HTML document -->
-        <script type="text/javascript" src="js/adyen.encrypt.min.js?0_1_17"></script>
+        <script type="text/javascript" src="js/adyen.encrypt.min.js?0_1_18"></script>
+        <!-- <script type="text/javascript" src="js/addOns/adyen.cardtype.min.js?0_1_18"></script>--> 
         
         <script type="text/javascript">
             
@@ -110,7 +112,10 @@
             options.cardTypeElement = document.getElementById('cardType');
             
             // the form will be encrypted before it is submitted
-            adyen.encrypt.createEncryptedForm( form, key, options);
+            var encryptedForm = adyen.encrypt.createEncryptedForm( form, key, options);
+            
+            // encryptedForm.addCardTypeDetection(options.cardTypeElement)
+            
             
         </script>
     </body>
