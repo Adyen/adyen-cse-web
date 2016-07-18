@@ -38,7 +38,7 @@ The `createEncryption ( key , `*`options`*` )` and `createEncryptedForm ( form, 
 
   Handler to be called after on validation of the form. 
   
-  The callback function will be execyted after the validation routine of the CSE form has been completed and will receive the validaty status of the form as it's first argument.
+  The callback function will be executed after the validation routine of the CSE form has been completed and will receive the validity status of the form as it's first argument.
   
 * **HTMLElement `[cardTypeElement]`**
 
