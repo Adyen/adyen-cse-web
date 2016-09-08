@@ -10,7 +10,7 @@ The library currently offers two integration methods:
 The library currently has three inclusion / loading styling:
 - Download `adyen.encrypt.min.js`  and host it yourself. Both HTML based as JavaScript only integration is supported.
 - Download `adyen.encrypt.nodom.min.js` and host it yourself. Only supports JavaScript only integration.
-- Adyen Hosted version in which the public key is embedded in the JavaScript. This integration makes sure you always have the latest security patches, and don't have to keep your public key in sync with the Adyen servers manually. See [Adyen Hosted Form Based Integration](HostedCSE.md) for more details. 
+- Adyen Hosted version in which the public key is embedded in the JavaScript. This integration makes sure you always have the latest security patches, and don't have to keep your public key in sync with the Adyen servers manually. See [Adyen Hosted Form Based Integration](HostedCSE.md) for more details.
 
 
 ## HTML based integration
@@ -49,7 +49,7 @@ Enricht a form in your page with the CSE onSubmit and (optionally) validation be
 // The form element to encrypt
 var form    = document.getElementById('adyen-encrypted-form');
 // The public key
-var key     =   "your key as retrieved from the Adyen Customer Area Web Service User page"; 
+var key     =   "your key as retrieved from the Adyen Customer Area Web Service User page";
 // Form and encryption options. See adyen.encrypt.simple.html for details
 var options = {};
 // Bind encryption to the form
@@ -80,7 +80,7 @@ require(['adyen/encrypt'], function(adyenEncrypt) {
     // The form element to encrypt
     var form    = document.getElementById('adyen-encrypted-form');
     // The public key
-    var key     =   "your key as retrieved from the Adyen Customer Area Web Service User page"; 
+    var key     =   "your key as retrieved from the Adyen Customer Area Web Service User page";
     // Form and encryption options. See adyen.encrypt.simple.html for details
     var options = {};
     // Bind encryption to the form
@@ -99,15 +99,15 @@ In case the HTML integration is troublesome in your setup, the library has been 
 <script type="text/javascript" src="js/adyen.encrypt.nodom.min.js"></script>
 <script type="text/javascript">
 (function() {
-    var key     =   "your key as retrieved from the Adyen Customer Area Web Service User page"; 
+    var key     =   "your key as retrieved from the Adyen Customer Area Web Service User page";
     var options = {}; // See adyen.encrypt.nodom.html for details
 
     var cseInstance = adyen.encrypt.createEncryption(key, options);
 
     function encryptMyData() {
-    
+
         var postData = {};
-        
+
         var cardData = {
             number : cardNumber,
             cvc : cvc,
@@ -116,12 +116,12 @@ In case the HTML integration is troublesome in your setup, the library has been 
             expiryYear : expiryYear,
             generationtime : generationtime
         };
-        
+
         postData['adyen-encrypted-data'] = cseInstance.encrypt(cardData);
-        
+
         // Ajax Call or different handling of the post data
     }
-    
+
 })();
 </script>
 ````
@@ -131,7 +131,7 @@ In case the HTML integration is troublesome in your setup, the library has been 
 Add to your `package.json`:
 ```
 "dependencies": {
-  "adyen-cse-js": "git+https://github.com/Adyen/CSE-JS.git#v0.1.XX"
+  "adyen-cse-web": "git+https://github.com/Adyen/adyen-cse-web.git#v0.1.XX"
 }
 ```
 
@@ -140,7 +140,7 @@ Then run `npm install`.
 Now you can use adyen as a regular npm package:
 
 ```js
-var adyenEncrypt = require('adyen-cse-js');
+var adyenEncrypt = require('adyen-cse-web');
 
 var cseInstance = adyenEncrypt.createEncryption(key, options);
 ```
@@ -173,7 +173,7 @@ JavaScript version 0_1_16
 JavaScript version 0_1_15
 -------
 
-* Add cardtype detection for three new card types 
+* Add cardtype detection for three new card types
 
 * Improve card type detection for dual branded cards (ELO)
 
@@ -184,7 +184,7 @@ JavaScript version 0_1_15
 JavaScript version 0_1_14
 -------
 
-* Clean up inconsistencies between the nodom Encryption and the UI engine 
+* Clean up inconsistencies between the nodom Encryption and the UI engine
 
 * Only validate fields that are only there. Removing CVC from the HTML (in case of mister cash) no longer fails validation.
 
@@ -252,7 +252,7 @@ JavaScript version 0_1_5
 ---
 
 The 0_1_5 version of the JavaScript client-side encryption library upgrades the random number generator and the JSBN implementation.
- 
+
 
 JavaScript version 0_1_4
 ---
@@ -261,7 +261,7 @@ JavaScript version 0_1_4
  All properties are configurable through the options object:
 
  * ```options.enableValidations // default: true```
- 
+
    Enable basic field validation (default is true)
 
    The submit button will be disabled when fields proof to be invalid. The form submission will be prevented as well.
@@ -270,16 +270,16 @@ JavaScript version 0_1_4
     options.enableValidations = true;
     ```
  * ```options.submitButtonAlwaysEnabled // default: false```
- 
+
    Always have the submit button enabled, even in case of validation errors.
- 
+
    ```javascript
    options.submitButtonAlwaysEnabled = false;
    ```
  * ```options.numberIgnoreNonNumeric // default: true```
- 
+
  The payment handling ignores non-numeric characters for the card field.
- 
+
  By default non-numeric characters will also be ignored while validating
  the card number field. This can be disabled for UX reasons.
 
@@ -288,7 +288,7 @@ JavaScript version 0_1_4
  ```
 
  Patches
- 
+
  * 0_1_4p1
- 
+
      Remove unnecessary ```document.title``` assignment.
