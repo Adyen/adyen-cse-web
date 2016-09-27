@@ -135,6 +135,15 @@ Add to your `package.json`:
 }
 ```
 
+**Please note that the XX needs to be replaced with the version of the library you wish to use**
+
+For the current latest release use the following dependency:
+```
+"dependencies": {
+  "adyen-cse-web": "git+https://github.com/Adyen/adyen-cse-web.git#v0.1.18"
+}
+```
+
 Then run `npm install`.
 
 Now you can use adyen as a regular npm package:
