@@ -1,7 +1,7 @@
 {
-  "name": "adyen-cse-js",
+  "name": "adyen-cse-web",
   "description": "Adyen javascript client-side encryption library",
-  "homepage": "https://github.com/Adyen/CSE-JS",
+  "homepage": "https://github.com/Adyen/adyen-cse-web",
   "main": "./js/adyen.encrypt.js",
   "license": "MIT",
   "keywords": [
