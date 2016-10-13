@@ -152,6 +152,7 @@ Now you can use adyen as a regular npm package:
 var adyenEncrypt = require('adyen-cse-web');
 
 var cseInstance = adyenEncrypt.createEncryption(key, options);
+```
 
 # Version History
 
