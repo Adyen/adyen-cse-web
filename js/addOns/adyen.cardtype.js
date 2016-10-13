@@ -64,37 +64,39 @@
             
                 var currentCardType = null, currentMatchSize = 0;
                 
+                console.log("Determining card type for " + variant);
+                console.log("Variants", availableTypes);
+                
                 for ( var i = Cards.size; i-- > 0; ) {
                     var card = Cards[i];
                     
                     if (!contains(availableTypes, card.cardtype)) {
+                        console.log("  CardType Skipped", card.cardtype);
                         continue;
                     }
                     
-                    if (card.setCardNumber(variant).isCardNumber()) {
+                    for (var c = 0; c < card.rules.size; c++) {
+                        var len = Math.min(variant.length, card.rules[c].length);
                         
-                        for (var c = 0; c < card.rules.size; c++) {
-                            var len = Math.min(variant.length, card.rules[c].length);
-                            
-                            if (len < 3) {
-                                // Minimum length included because of collissions
-                                continue;
-                            }
-                            
-                            if (variant.substring(0, len) === card.rules[c].substring(0, len)) {
-                                if (len > currentMatchSize) {
-                                    currentCardType = card;
-                                    currentMatchSize = len;
-                                }
-                            }
+                        if (len <= 1 || variant.length < card.rules[c].length) {
+                            // Minimum length included because of collissions on single number cardtypes
+                            continue;
                         }
                         
-                        
+                        if (variant.substring(0, len) === card.rules[c].substring(0, len)) {
+                            if (len > currentMatchSize) {
+                                console.log("Setting card type to ", card);
+                                currentCardType = card;
+                                currentMatchSize = len;
+                            }
+                        }
                     }
+                    
                     card.setCardNumber(null);
                 }
                 
                 if (currentCardType === null) {
+                    console.log("Could not determine card type, so falling back to HPP implementation: " + variant)
                     currentCardType = getBaseCard( variant, availableTypes );
                 }
                 
@@ -133,7 +135,7 @@
     };
 
     adyen.CardTypeDetection = {
-        version : '0_1_18',
+        version : '0_1_19',
         getHandler : function ( cardTypeElement ) {
             return function ( ev ) {
 

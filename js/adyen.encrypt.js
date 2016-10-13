@@ -7,7 +7,7 @@
  * * Stanford Javascript Crypto Library | http://crypto.stanford.edu/sjcl/
  * * JSON in JavaScript | http://www.JSON.org/
  * 
- * Version: 0_1_18
+ * Version: 0_1_19
  * Author:  ADYEN (c) 2014
 
 <!DOCTYPE html>
@@ -62,8 +62,8 @@
 
         <!-- How to use the Adyen encryption client-side JS library -->
         <!-- N.B. Make sure the library is *NOT* loaded in the "head" of the HTML document -->
-        <script type="text/javascript" src="js/adyen.encrypt.min.js?0_1_18"></script>
-        <!-- <script type="text/javascript" src="js/addOns/adyen.cardtype.min.js?0_1_18"></script>--> 
+        <script type="text/javascript" src="js/adyen.encrypt.min.js?0_1_19"></script>
+        <!-- <script type="text/javascript" src="js/addOns/adyen.cardtype.min.js?0_1_19"></script>--> 
         
         <script type="text/javascript">
             
@@ -142,7 +142,7 @@
     var define, exports, df = function() {return "";};
 
     /* typedarray.js */
-    (function(){try{var b=[new Uint8Array(1),new Uint32Array(1),new Int32Array(1)];return}catch(g){}function f(e,a){return this.slice(e,a)}function c(j,e){if(arguments.length<2){e=0}for(var a=0,h=j.length;a<h;++a,++e){this[e]=j[a]&255}}function d(e){var a;if(typeof e==="number"){a=new Array(e);for(var h=0;h<e;++h){a[h]=0}}else{a=e.slice(0)}a.subarray=f;a.buffer=a;a.byteLength=a.length;a.set=c;if(typeof e==="object"&&e.buffer){a.buffer=e.buffer}return a}try{window.Uint8Array=d}catch(g){}try{window.Uint32Array=d}catch(g){}try{window.Int32Array=d}catch(g){}})();(function(){if("btoa" in window){return}var a="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";window.btoa=function(g){var e="";var f,d;for(f=0,d=g.length;f<d;f+=3){var k=g.charCodeAt(f)&255;var j=g.charCodeAt(f+1)&255;var h=g.charCodeAt(f+2)&255;var c=k>>2,b=((k&3)<<4)|(j>>4);var m=f+1<d?((j&15)<<2)|(h>>6):64;var l=f+2<d?(h&63):64;e+=a.charAt(c)+a.charAt(b)+a.charAt(m)+a.charAt(l)}return e}})();
+    (function(){try{var b=[new Uint8Array(1),new Uint32Array(1),new Int32Array(1)];return}catch(g){}function f(e,a){return this.slice(e,a)}function c(j,e){if(arguments.length<2){e=0}for(var a=0,h=j.length;a<h;++a,++e){this[e]=j[a]&255}}function d(e){var a;if(typeof e==="number"){a=new Array(e);for(var h=0;h<e;++h){a[h]=0}}else{a=e.slice(0)}a.subarray=f;a.buffer=a;a.byteLength=a.length;a.set=c;if(typeof e==="object"&&e.buffer){a.buffer=e.buffer}return a}try{window.Uint8Array=d}catch(g){}try{window.Uint32Array=d}catch(g){}try{window.Int32Array=d}catch(g){}})();(function(){try{if(typeof window==="undefined"){return}if("btoa" in window){return}var a="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";window.btoa=function(h){var f="";var g,e;for(g=0,e=h.length;g<e;g+=3){var l=h.charCodeAt(g)&255;var k=h.charCodeAt(g+1)&255;var j=h.charCodeAt(g+2)&255;var d=l>>2,c=((l&3)<<4)|(k>>4);var o=g+1<e?((k&15)<<2)|(j>>6):64;var m=g+2<e?(j&63):64;f+=a.charAt(d)+a.charAt(c)+a.charAt(o)+a.charAt(m)}return f}}catch(b){}})();
 
     /* For older browser make sure to include a shim for the JSON object */
     
@@ -172,7 +172,7 @@
     (function(a){var b=a.codec.bytes=a.codec.bytes||{};b.fromBits=b.fromBits||function(c){var d=[],g=a.bitArray.bitLength(c),f,e;for(f=0;f<g/8;f++){if((f&3)===0){e=c[f/4]}d.push(e>>>24);e<<=8}return d};b.toBits=b.toBits||function(c){var d=[],f,e=0;for(f=0;f<c.length;f++){e=e<<8|c[f];if((f&3)===3){d.push(e);e=0}}if(f&3){d.push(a.bitArray.partial(8*(f&3),e))}return d}}(sjcl));
     
     /* adyen.eventlog.js */
-    var evLog;(function(){var a=new Date().getTime();function c(e,f,g,d){if(typeof e.addEventListener==="function"){e.addEventListener(f,g,d)}else{if(e.attachEvent){e.attachEvent("on"+f,g)}else{throw new Error(encrypt.errors.UNABLETOBIND+": Unable to bind "+f+"-event")}}}evLog=evLog||(function(){var d={};return function(j,h,e){if(j==="bind"){evLog(e+"Bind");c(h,"change",function(i){evLog(e+"FieldChangeCount");evLog("log",e,"ch");try{evLog("set",e+"FieldEvHa",b(h))}catch(l){evLog("set",e+"FieldEvHa","Err")}},true);c(h,"click",function(){evLog(e+"FieldClickCount");evLog("log",e,"cl")},true);c(h,"focus",function(){evLog(e+"FieldFocusCount");evLog("log",e,"fo")},true);c(h,"blur",function(){evLog(e+"FieldBlurCount");evLog("log",e,"bl")},true);c(h,"touchstart",function(){evLog(e+"FieldTouchStartCount");evLog("log",e,"Ts")},true);c(h,"touchend",function(){evLog(e+"FieldTouchEndCount");evLog("log",e,"Te")},true);c(h,"touchcancel",function(){evLog(e+"FieldTouchCancelCount");evLog("log",e,"Tc")},true);c(h,"keyup",function(i){if(i.keyCode==16){evLog("log",e,"Su")}else{if(i.keyCode==17){evLog("log",e,"Cu")}else{if(i.keyCode==18){evLog("log",e,"Au")}}}});c(h,"keydown",function(i){evLog(e+"FieldKeyCount");switch(i&&i.keyCode){case 8:evLog("log",e,"Kb");break;case 16:evLog("log",e,"Sd");break;case 17:evLog("log",e,"Cd");break;case 18:evLog("log",e,"Ad");break;case 37:evLog("log",e,"Kl");break;case 39:evLog("log",e,"Kr");break;case 46:evLog("log",e,"Kd");break;case 32:evLog("log",e,"Ks");break;default:if(i.keyCode>=48&&i.keyCode<=57||i.keyCode>=96&&i.keyCode<=105){evLog("log",e,"KN")}else{if(i.keyCode>=65&&i.keyCode<=90){evLog("log",e,"KL")}else{evLog("log",e,"KU");evLog("log",e+"UnkKeys",i.keyCode)}}break}},true);return}if(j==="set"){d[h]=e;return}if(j==="log"){var k=h+"FieldLog";var f=(new Date().getTime())-a;f=Math.round(f/100);if(!d.hasOwnProperty(k)){d[k]=e+"@"+f}else{d[k]+=","+e+"@"+f}if(d[k].length>1500){d[k]=d[k].substring(d[k].length-1500);d[k]=d[k].substring(d[k].indexOf(",")+1)}return}if(j==="extend"){for(var g in d){if(g==="number"||g==="expiryMonth"||g==="expiryYear"||g==="generationtime"||g==="holderName"||g==="cvc"){continue}if(d.hasOwnProperty(g)){h[g]=""+d[g]}}return}if(!d.hasOwnProperty(j)){d[j]=1}else{d[j]++}}})();function b(j){var p=function(){return{}};if(window.jQuery&&typeof window.jQuery._data=="function"){p=function(o){return window.jQuery._data(o,"events")}}var n=j,d=0,q=[],u=["onmousedown","onmouseup","onmouseover","onmouseout","onclick","onmousemove","ondblclick","onerror","onresize","onscroll","onkeydown","onkeyup","onkeypress","onchange","onsubmit"],k="Own",s="Par",t=u.length;var i=0;while(n&&n!==n.documentElement){i++;var m=t,g,l,h=(n.nodeName||n.tagName||"").toUpperCase().substring(0,3);while(m--){g=u[m];if(n[name]){g=g+((n===j)?k:s)+h;d++;q[g]=q[g]||0;q[g]++}}var r=p(n);if(typeof r==="object"){for(var g in r){if(r.hasOwnProperty(g)){l=r[g].length;g=g+((n===j)?k:s)+h;q[g]=q[g]||0;q[g]+=l;d+=l}}}if(!n.parentNode){break}n=n.parentNode}var e=["total="+d];for(var f in q){if(q.hasOwnProperty(f)&&q[f]>0){e.push(f+"="+q[f])}}return e.join("&")}if(window&&(window.attachEvent||window.addEventListener)){c(window,"focus",function(){evLog("activate")});c(window,"blur",function(){evLog("deactivate")})}}());
+    var evLog;(function(){var a=new Date().getTime();function c(e,f,g,d){if(typeof e.addEventListener==="function"){e.addEventListener(f,g,d)}else{if(e.attachEvent){e.attachEvent("on"+f,g)}else{throw new Error(encrypt.errors.UNABLETOBIND+": Unable to bind "+f+"-event")}}}evLog=evLog||(function(){var d={};return function(j,h,e){if(j==="bind"){evLog(e+"Bind");c(h,"change",function(i){evLog(e+"FieldChangeCount");evLog("log",e,"ch");try{evLog("set",e+"FieldEvHa",b(h))}catch(l){evLog("set",e+"FieldEvHa","Err")}},true);c(h,"click",function(){evLog(e+"FieldClickCount");evLog("log",e,"cl")},true);c(h,"focus",function(){evLog(e+"FieldFocusCount");evLog("log",e,"fo")},true);c(h,"blur",function(){evLog(e+"FieldBlurCount");evLog("log",e,"bl")},true);c(h,"touchstart",function(){evLog(e+"FieldTouchStartCount");evLog("log",e,"Ts")},true);c(h,"touchend",function(){evLog(e+"FieldTouchEndCount");evLog("log",e,"Te")},true);c(h,"touchcancel",function(){evLog(e+"FieldTouchCancelCount");evLog("log",e,"Tc")},true);c(h,"keyup",function(i){if(i.keyCode==16){evLog("log",e,"Su")}else{if(i.keyCode==17){evLog("log",e,"Cu")}else{if(i.keyCode==18){evLog("log",e,"Au")}}}});c(h,"keydown",function(i){evLog(e+"FieldKeyCount");switch(i&&i.keyCode){case 8:evLog("log",e,"Kb");break;case 16:evLog("log",e,"Sd");break;case 17:evLog("log",e,"Cd");break;case 18:evLog("log",e,"Ad");break;case 37:evLog("log",e,"Kl");break;case 39:evLog("log",e,"Kr");break;case 46:evLog("log",e,"Kd");break;case 32:evLog("log",e,"Ks");break;default:if(i.keyCode>=48&&i.keyCode<=57||i.keyCode>=96&&i.keyCode<=105){evLog("log",e,"KN")}else{if(i.keyCode>=65&&i.keyCode<=90){evLog("log",e,"KL")}else{evLog("log",e,"KU");evLog("log",e+"UnkKeys",i.keyCode)}}break}},true);return}if(j==="set"){d[h]=e;return}if(j==="log"){var k=h+"FieldLog";var f=(new Date().getTime())-a;f=Math.round(f/100);if(!d.hasOwnProperty(k)){d[k]=e+"@"+f}else{d[k]+=","+e+"@"+f}if(d[k].length>1500){d[k]=d[k].substring(d[k].length-1500);d[k]=d[k].substring(d[k].indexOf(",")+1)}return}if(j==="extend"){for(var g in d){if(g==="number"||g==="expiryMonth"||g==="expiryYear"||g==="generationtime"||g==="holderName"||g==="cvc"){continue}if(d.hasOwnProperty(g)){h[g]=""+d[g]}}return}if(!d.hasOwnProperty(j)){d[j]=1}else{d[j]++}}})();function b(j){var p=function(){return{}};if(window.jQuery&&typeof window.jQuery._data=="function"){p=function(o){return window.jQuery._data(o,"events")}}var n=j,d=0,q=[],u=["onmousedown","onmouseup","onmouseover","onmouseout","onclick","onmousemove","ondblclick","onerror","onresize","onscroll","onkeydown","onkeyup","onkeypress","onchange","onsubmit"],k="Own",s="Par",t=u.length;var i=0;while(n&&n!==n.documentElement){i++;var m=t,g,l,h=(n.nodeName||n.tagName||"").toUpperCase().substring(0,3);while(m--){g=u[m];if(n[name]){g=g+((n===j)?k:s)+h;d++;q[g]=q[g]||0;q[g]++}}var r=p(n);if(typeof r==="object"){for(var g in r){if(r.hasOwnProperty(g)){l=r[g].length;g=g+((n===j)?k:s)+h;q[g]=q[g]||0;q[g]+=l;d+=l}}}if(!n.parentNode){break}n=n.parentNode}var e=["total="+d];for(var f in q){if(q.hasOwnProperty(f)&&q[f]>0){e.push(f+"="+q[f])}}return e.join("&")}if(window&&(window.attachEvent||window.addEventListener)){c(window,"focus",function(){evLog("activate");if(window.location&&typeof window.location.href=="string"){evLog("set","referrer",window.location.href)}});c(window,"blur",function(){evLog("deactivate")})}}());
     
     /* adyen */
     var adyen = root.adyen = root.adyen || {};
@@ -276,7 +276,7 @@
     }
     
 
-    encrypt.version = '0_1_18';
+    encrypt.version = '0_1_19';
 
     
     /*
@@ -419,6 +419,39 @@
     validations.holderNameCheck = function ( val ) {
         return (val && val.match && val.match(/\S/)) ? true : false;
     };
+    
+    validations.generationTimeValidDate = function ( val ) {
+        if (typeof val !== "string") {
+            return false;
+        }
+        var m = val.match(/^(\d{4})-?(\d{2})-?(\d{2})$/);
+        return (m && ("" + m[1]).match(/^20[1-9][0-9]$/) && ("" + m[2]).match(/^(12|11|10|0[1-9])$/) && ("" + m[3]).match(/^(31|30|20|10|[012][1-9])$/)) ? true : false;
+    };
+    
+    validations.generationTimeValidTime = function ( val ) {
+        if (typeof val !== "string") {
+            return false;
+        }
+        
+        var reZone = /(Z|[\+\-][012345][0-9]:?[012345][0-9])$/;
+        
+        if (!val.match(reZone)) {
+            return false;
+        }
+        
+        var withoutZoneAndMs = val.replace(reZone, '').replace(/\.\d{3}$/, '');
+        
+        return withoutZoneAndMs.match(/^[012345][0-9]:?[012345][0-9]:?[012345][0-9]$/);
+    };
+    
+    validations.generationTimeCheck = function (val) {
+        if (typeof val !== "string") {
+            return false;
+        }
+        var parts = val.split('T');
+       
+        return (parts.length === 2 && validations.generationTimeValidDate(parts[0]) && validations.generationTimeValidTime(parts[1])) ? true : false;
+    };
 
     var Encryption = function ( key, options ) {
         try {
@@ -538,8 +571,16 @@
      * 
      */
 
-    Encryption.prototype.encrypt = function ( data ) {
+    Encryption.prototype.encrypt = function ( original ) {
 
+        var data = {};
+        
+        for (var i in original) {
+            if ( original.hasOwnProperty(i) ) {
+                data[i] = original[i];
+            }
+        }
+        
         var rsa, aes, cipher, keybytes, encrypted, prefix, validationObject = {};
         
         if (typeof data.number !== "undefined") {
@@ -556,6 +597,9 @@
         }
         if (typeof data.holderName !== "undefined") {
             validationObject.holderName = data.holderName;
+        }
+        if (typeof data.generationtime !== "undefined") {
+            validationObject.generationtime = data.generationtime;
         }
         
         if ( this.options.enableValidations !== false && this.validate(validationObject).valid === false) {
@@ -603,6 +647,10 @@
 
             if ( this.options[ field + 'IgnoreNonNumeric' ] ) {
                 val = val.replace( /\D/g, '' );
+            }
+            
+            if ( this.options[ field + 'SkipValidation' ] ) {
+                continue;
             }
             
             for ( var relatedField in data ) {
@@ -656,6 +704,10 @@
             case 'holderName':
                 result.holderName = validations.holderNameCheck(val)
                 result.valid = result.valid && result.holderName;
+                break;
+            case 'generationtime':
+                result.generationtime = validations.generationTimeCheck(val);
+                result.valid = result.valid && result.generationtime;
                 break;
             default:
                 result.unknown = result.unknown || [];
@@ -803,7 +855,11 @@
         if ( typeof options.numberIgnoreNonNumeric === "undefined" ) {
             options.numberIgnoreNonNumeric = true;
         }
-
+        
+        // Assure booleans
+        options.generationtimeSkipValidation = ( options.generationtimeSkipValidation === true );
+        options.cvcSkipValidation = ( options.cvcSkipValidation === true );
+        
         // Validate the custom data field name
         if ( typeof options.fieldNameAttribute !== 'string' || !options.fieldNameAttribute.match( /^data(-\w+)+$/i ) ) {
             options.fieldNameAttribute = DEFAULT_FIELDNAME_ATTRIBUTE;

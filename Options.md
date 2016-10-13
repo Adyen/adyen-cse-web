@@ -8,7 +8,7 @@ The `createEncryption ( key , `*`options`*` )` and `createEncryptedForm ( form, 
 
 * **string `[fieldNameAttribute = 'data-encrypted-name']`** - *since version: 0_1_10*
 
-  Configure the attribute to identify fields to be encrypted. Useful when you have multiple payment options within the same form, and want to bind each set to its own CSE handler.
+  Configure the attribute to identify fields to be encrypted. Useful when you have multiple payment options within the same form, and want to bind each set to it's own CSE handler.
   
 * **boolean `[enableValidations = true] `**  
   
@@ -32,13 +32,13 @@ The `createEncryption ( key , `*`options`*` )` and `createEncryptedForm ( form, 
 
   Custom handler to be called on submit of the form.
   
-  The callback function will be executed after encryption has taken place, and will receive the original submit event as its first argument.
+  The callback function will be executed after encryption has taken place, and will receive the original submit event as it's first argument.
 
 * **function `[onvalidate]`**
 
   Handler to be called after on validation of the form. 
   
-  The callback function will be executed after the validation routine of the CSE form has been completed and will receive the validity status of the form as its first argument.
+  The callback function will be execyted after the validation routine of the CSE form has been completed and will receive the validaty status of the form as it's first argument.
   
 * **HTMLElement `[cardTypeElement]`**
 
