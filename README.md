@@ -1,19 +1,27 @@
-# Client-Side Encryption (CSE)
+# Adyen CSE for Web
 
-This repository contains sample code for adding Adyen Payments using Client-side encryption (CSE).
+This repository contains a code sample for adding Adyen payments using Client-Side Encryption (CSE). With CSE card data is encrypted on a client side before you submit it through your own server to the Adyen API. By using CSE you reduce your scope of [PCI compliance](https://en.wikipedia.org/wiki/Payment_Card_Industry_Data_Security_Standard), because no raw card data travels through your server. 
+
+Looking for the Android or iOS equivalent? We have the CSE library also available in Java ([AdyenCSE-Android](https://github.com/Adyen/Adyen-cse-android)) and Objective-C ([AdyenCSE-iOS](https://github.com/Adyen/adyen-cse-ios)).
+
+## Requirements
+
+All our CSE libraries rely on you setting up your own server for communicating with the Adyen API. By using a server you ensure that API authentication credentials never get exposed. Please note that you need to have [signed up for an account at Adyen](https://www.adyen.com/signup) before you can send requests to the Adyen API.
+
+## Usage
 
 The library currently offers two integration methods:
 
-- [HTML based integration](#html-based-integration) in which a HTML form is enriched, encrypting data on submit
-- [JavaScript only integration](#javascript-only-integration) in which data can be encrypted using a JavaScript only API.
+- [HTML-based integration](#html-based-integration) in which a HTML form is enriched, encrypting data on submit.
+- [JavaScript-only integration](#javascript-only-integration) in which data can be encrypted using a JavaScript API only.
 
 The library currently has three inclusion / loading styling:
-- Download `adyen.encrypt.min.js`  and host it yourself. Both HTML based as JavaScript only integration is supported.
-- Download `adyen.encrypt.nodom.min.js` and host it yourself. Only supports JavaScript only integration.
-- Adyen Hosted version in which the public key is embedded in the JavaScript. This integration makes sure you always have the latest security patches, and don't have to keep your public key in sync with the Adyen servers manually. See [Adyen Hosted Form Based Integration](HostedCSE.md) for more details. 
+- Download `adyen.encrypt.min.js`  and host it yourself. Both HTML-based as JavaScript-only integration types are supported.
+- Download `adyen.encrypt.nodom.min.js` and host it yourself. Only supports JavaScript-only integration.
+- Adyen-hosted version in which the public key is embedded in the JavaScript. This integration makes sure you always have the latest security patches, and don't have to keep your public key in sync with the Adyen servers manually. See [Adyen Hosted Form Based Integration](HostedCSE.md) for more details. 
 
 
-## HTML based integration
+## HTML-based integration
 
 This integration binds to existing HTML in the page, adding a hidden input containing the encrypted card data to the form on the moment the form is submitted.
 
@@ -21,10 +29,10 @@ The complete integration requires HTML markup to be present in the page, as well
 
 ### HTML Template
 
-Create your payment form, and make sure to add a way to reference to your form from JavaScript. For example by adding `id="adyen-encrypted-form"`.
+Create your payment form and make sure to add a way to reference to your form from JavaScript. For example by adding `id="adyen-encrypted-form"`.
 
-Note that card input fields should not have a `name=` attribute, but are annotated by the `data-encrypted-name=` attribute, to mark them for encryption. This makes sure that the input values are never send to the server.
-````html
+Note that card input fields should not have a `name=` attribute, but are annotated by the `data-encrypted-name=` attribute, to mark them for encryption. This makes sure that the input values are never sent to the server.
+```html
 <form method="POST" action="#handler" id="adyen-encrypted-form">
     <input type="text" size="20" autocomplete="off" data-encrypted-name="number" />
     <input type="text" size="20" autocomplete="off" data-encrypted-name="holderName" />
@@ -34,18 +42,18 @@ Note that card input fields should not have a `name=` attribute, but are annotat
     <input type="hidden" value="generate-this-server-side" data-encrypted-name="generationtime" />
     <input type="submit" value="Pay" />
 </form>
-````
+```
 
 ### JavaScript
-Accompanying the above the HTML template, there are two variants to including the CSE library. The original plain JavaScript variant relies on a global `adyen.encrypt` object, while on popular demand a AMD style module has been added.
+Accompanying the above HTML template, there are two variants to including the CSE library. The original plain JavaScript variant relies on a global `adyen.encrypt` object, while on popular demand an AMD style module has been added.
 
 #### Plain JavaScript
-Include the Adyen Clientside Encryption Library to your page
-````html
+Include the Adyen Client-Side Encryption library to your page:
+```html
 <script type="text/javascript" src="js/adyen.encrypt.min.js"></script>
-````
-Enricht a form in your page with the CSE onSubmit and (optionally) validation behaviors
-````javascript
+```
+Enrich a form in your page with the CSE onSubmit and (optionally) validation behaviors:
+```javascript
 // The form element to encrypt
 var form    = document.getElementById('adyen-encrypted-form');
 // The public key
@@ -54,28 +62,28 @@ var key     =   "your key as retrieved from the Adyen Customer Area Web Service 
 var options = {};
 // Bind encryption to the form
 adyen.encrypt.createEncryptedForm( form, key, options);
-````
+```
 
 See [Options](Options.md) for a full list of options.
 
 #### RequireJS
-Make sure you include requirejs or a alternative AMD module loader in your page
-````html
+Make sure you include requirejs or a alternative AMD module loader in your page:
+```html
 <script src="path/to/libs/require.js/2.1.17/require.min.js"></script>
-````
+```
 You can either rename the `adyen.encrypt.min.js` into `adyen/encrypt.js`, or add a paths configuration:
-````javascript
+```javascript
 // Your paths config, or rename the adyen.encrypt.min.js to adyen/encrypt.js
 require.config({
     paths: {
         'adyen/encrypt' : '../simple/js/adyen.encrypt.min'
     }
 });
-````
+```
 
 In the `main.js` or similar file, enrich the form using a `require` call.
 
-````javascript
+```javascript
 require(['adyen/encrypt'], function(adyenEncrypt) {
     // The form element to encrypt
     var form    = document.getElementById('adyen-encrypted-form');
@@ -87,15 +95,15 @@ require(['adyen/encrypt'], function(adyenEncrypt) {
     adyenEncrypt.createEncryptedForm( form, key, options );
 });
 </script>
-````
+```
 
-## JavaScript only integration
+## JavaScript-only integration
 
 In case the HTML integration is troublesome in your setup, the library has been split up into two parts since release V0_1_11. The newly introduced part is a HTML independant encryption.
 
-*As with all CSE integrations, make sure that no card data is send to your server unencrypted*
+*As with all CSE integrations, make sure that no card data is sent to your server unencrypted*
 
-````html
+```html
 <script type="text/javascript" src="js/adyen.encrypt.nodom.min.js"></script>
 <script type="text/javascript">
 (function() {
@@ -119,12 +127,12 @@ In case the HTML integration is troublesome in your setup, the library has been 
         
         postData['adyen-encrypted-data'] = cseInstance.encrypt(cardData);
         
-        // Ajax Call or different handling of the post data
+        // AJAX call or different handling of the post data
     }
     
 })();
 </script>
-````
+```
 
 #### Node module
 
@@ -314,3 +322,11 @@ JavaScript version 0_1_4
  * 0_1_4p1
  
      Remove unnecessary ```document.title``` assignment.
+
+## Questions?
+
+If you have any questions or suggestions, please contact your account manager or send your inquiry to support@adyen.com.
+
+## License
+
+This repository is open-source and available under the [MIT license](https://en.wikipedia.org/wiki/MIT_License). See the LICENSE file for more information.
