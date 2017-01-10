@@ -1128,7 +1128,7 @@
             
             if (handlers.luhnHandler && handlers.cvcHandler && elementsByName.number && elementsByName.cvc) {
                 handlers.luhnHandler.chain(function(ev) {
-                    handlers.cvcHandler({target:elementsByName.cvc, originalEvent: ev, type : (ev|{}).type, isInitializing : (ev||{}).isInitializing})
+                    handlers.cvcHandler({target:elementsByName.cvc, originalEvent: ev, type : (ev||{}).type, isInitializing : (ev||{}).isInitializing})
                 });
             }
         },
