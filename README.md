@@ -6,19 +6,19 @@ Looking for the Android or iOS equivalent? We have the CSE library also availabl
 
 ## Requirements
 
-All our CSE libraries rely on you setting up your own server for communicating with the Adyen API. By using a server you ensure that API authentication credentials never get exposed. Please note that you need to have [signed up for an account at Adyen](https://www.adyen.com/signup) before you can send requests to the Adyen API.
+All our CSE libraries rely on you setting up your own server for communicating with the Adyen API. By using a server you ensure that API authentication credentials never get exposed. Note that you need to have [signed up for an account at Adyen](https://www.adyen.com/signup) before you can send requests to the Adyen API.
 
 ## Usage
 
 The library currently offers two integration methods:
 
-- [HTML-based integration](#html-based-integration) in which a HTML form is enriched, encrypting data on submit.
-- [JavaScript-only integration](#javascript-only-integration) in which data can be encrypted using a JavaScript API only.
+- [HTML-based integration](#html-based-integration), in which an HTML form is enriched, encrypting data on submit.
+- [JavaScript-only integration](#javascript-only-integration), in which data can be encrypted using a JavaScript API only.
 
-The library currently has three inclusion / loading styling:
-- Download `adyen.encrypt.min.js`  and host it yourself. Both HTML-based as JavaScript-only integration types are supported.
+The library currently has three inclusion / loading styles:
+- Download `adyen.encrypt.min.js`  and host it yourself. Both HTML-based and JavaScript-only integration types are supported.
 - Download `adyen.encrypt.nodom.min.js` and host it yourself. Only supports JavaScript-only integration.
-- Adyen-hosted version in which the public key is embedded in the JavaScript. This integration makes sure you always have the latest security patches, and don't have to keep your public key in sync with the Adyen servers manually. See [Adyen Hosted Form Based Integration](HostedCSE.md) for more details. 
+- Adyen-hosted version, in which the public key is embedded into the JavaScript. Using this integration you can be always sure that you  have the latest security patches and don't have to keep your public key in sync with the Adyen servers manually. See [Adyen Hosted Form Based Integration](HostedCSE.md) for more details. 
 
 
 ## HTML-based integration
@@ -29,9 +29,9 @@ The complete integration requires HTML markup to be present in the page, as well
 
 ### HTML Template
 
-Create your payment form and make sure to add a way to reference to your form from JavaScript. For example by adding `id="adyen-encrypted-form"`.
+Create your payment form and add a way to reference to your form from JavaScript (for example, by adding `id="adyen-encrypted-form"`).
 
-Note that card input fields should not have a `name=` attribute, but are annotated by the `data-encrypted-name=` attribute, to mark them for encryption. This makes sure that the input values are never sent to the server.
+Note that card input fields should not have the `name=` attribute, but are annotated by the `data-encrypted-name=` attribute, to mark them for encryption. This makes sure that the input values are never sent to the server.
 ```html
 <form method="POST" action="#handler" id="adyen-encrypted-form">
     <input type="text" size="20" autocomplete="off" data-encrypted-name="number" />
@@ -45,10 +45,10 @@ Note that card input fields should not have a `name=` attribute, but are annotat
 ```
 
 ### JavaScript
-Accompanying the above HTML template, there are two variants to including the CSE library. The original plain JavaScript variant relies on a global `adyen.encrypt` object, while on popular demand an AMD style module has been added.
+Accompanying the above HTML template, there are two variants of including the CSE library. The original plain JavaScript variant relies on a global `adyen.encrypt` object, while on popular demand an AMD style module has been added.
 
 #### Plain JavaScript
-Include the Adyen Client-Side Encryption library to your page:
+Include the Adyen Client-Side Encryption library into your page:
 ```html
 <script type="text/javascript" src="js/adyen.encrypt.min.js"></script>
 ```
@@ -67,7 +67,7 @@ adyen.encrypt.createEncryptedForm( form, key, options);
 See [Options](Options.md) for a full list of options.
 
 #### RequireJS
-Make sure you include requirejs or a alternative AMD module loader in your page:
+Make sure you include RequireJS or an alternative AMD module loader in your page:
 ```html
 <script src="path/to/libs/require.js/2.1.17/require.min.js"></script>
 ```
@@ -99,9 +99,11 @@ require(['adyen/encrypt'], function(adyenEncrypt) {
 
 ## JavaScript-only integration
 
-In case the HTML integration is troublesome in your setup, the library has been split up into two parts since release V0_1_11. The newly introduced part is a HTML independant encryption.
+In case the HTML integration is troublesome in your setup, the library has been split up into two parts since release V0_1_11. The newly introduced part is an HTML-independent encryption.
 
-*As with all CSE integrations, make sure that no card data is sent to your server unencrypted*
+Note that this kind of integration may not be suitable for you, if you want to perform the **Fraudulent behaviour on payment page** risk check. For more information, refer to [Adyen documentation](https://docs.adyen.com/support/risk-management/revenueprotect-engine-rules/consistency-rules/fraudulent-behaviour-on-payment-page).
+
+*As with all CSE integrations, make sure that no card data is sent to your server unencrypted.*
 
 ```html
 <script type="text/javascript" src="js/adyen.encrypt.nodom.min.js"></script>
@@ -143,7 +145,7 @@ Add to your `package.json`:
 }
 ```
 
-**Please note that the XX needs to be replaced with the version of the library you wish to use**
+**Note that the XX needs to be replaced with the version of the library you wish to use.**
 
 For the current latest release use the following dependency:
 ```
@@ -163,6 +165,7 @@ var cseInstance = adyenEncrypt.createEncryption(key, options);
 ```
 
 # Version History
+
 
 JavaScript version 0_1_19
 -------
