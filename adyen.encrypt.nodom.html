@@ -9,6 +9,7 @@
   <body>
         
         <div id="adyen-encrypted-form">
+            <input type="button" onclick="addCardNumberField()" value="Create / monitor card number field" />
             <input type="button" onclick="encryptExample()" value="Encrypt" />
             <input type="button" onclick="validateExample()" value="Validate" />
         </div>
@@ -18,7 +19,7 @@
         <!-- N.B. Make sure the library is *NOT* loaded in the "head" of the HTML document -->
         
         
-        <script type="text/javascript" src="js/adyen.encrypt.nodom.min.js?0_1_18"></script>
+        <script type="text/javascript" src="js/adyen.encrypt.nodom.min.js?0_1_20"></script>
         <script type="text/javascript">
             
             // the public key
@@ -75,6 +76,19 @@
                 postData['adyen-encrypted-data'] = cseInstance.encrypt(cardData);
                 
                 return postData;
+            }
+
+            function addCardNumberField ( ) {
+                var field = addCardNumberField.__field;
+                if ( field ) {
+                    return;
+                }
+                field = document.createElement('input');
+                field.type = 'text';
+                field.placeHolder = "XXXX-XXXX-XXXX-XXXX";
+                document.body.appendChild ( field );
+                addCardNumberField.__field = field;
+                cseInstance.monitor ( "number", field );
             }
             
             function encryptExample() {

@@ -132,6 +132,11 @@ Note that this kind of integration may not be suitable for you, if you want to p
         // AJAX call or different handling of the post data
     }
     
+    // Enable behavior tracking on number and CVC fields
+    // Initiate before user interacts with the refeenced fields.
+    cseInstance.monitor( 'number', document.getElementById('numberField') );
+    cseInstance.monitor( 'cvc', document.getElementById('numberField') );
+    
 })();
 </script>
 ```
@@ -166,6 +171,12 @@ var cseInstance = adyenEncrypt.createEncryption(key, options);
 
 # Version History
 
+JavaScript version 0_1_20
+-------
+
+* Add `encryption.monitor( 'number', myCardField);` to allow fraud prevention data gathering for nodom implementations.
+
+* Improve entropy setup for older browsers
 
 JavaScript version 0_1_19
 -------
