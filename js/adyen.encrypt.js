@@ -7,7 +7,7 @@
  * * Stanford Javascript Crypto Library | http://crypto.stanford.edu/sjcl/
  * * JSON in JavaScript | http://www.JSON.org/
  * 
- * Version: 0_1_20
+ * Version: 0_1_20_1
  * Author:  ADYEN (c) 2014
 
 <!DOCTYPE html>
@@ -62,8 +62,8 @@
 
         <!-- How to use the Adyen encryption client-side JS library -->
         <!-- N.B. Make sure the library is *NOT* loaded in the "head" of the HTML document -->
-        <script type="text/javascript" src="js/adyen.encrypt.min.js?0_1_20"></script>
-        <!-- <script type="text/javascript" src="js/addOns/adyen.cardtype.min.js?0_1_20"></script>--> 
+        <script type="text/javascript" src="js/adyen.encrypt.min.js?0_1_20_1"></script>
+        <!-- <script type="text/javascript" src="js/addOns/adyen.cardtype.min.js?0_1_20_1"></script>-->
         
         <script type="text/javascript">
             
@@ -276,7 +276,7 @@
     }
     
 
-    encrypt.version = '0_1_20';
+    encrypt.version = '0_1_20_1';
 
     
     /*
@@ -1247,7 +1247,9 @@
 
         key : function() {
 
-            return sjcl.random.randomWords( 8, 6 );
+            this._key = this._key || sjcl.random.randomWords( 8, 6 );
+
+            return this._key;
 
         },
 

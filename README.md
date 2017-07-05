@@ -171,8 +171,10 @@ var cseInstance = adyenEncrypt.createEncryption(key, options);
 
 # Version History
 
-JavaScript version 0_1_20
+JavaScript version 0_1_20_1
 -------
+
+* **Warning: Make sure to use the 0.1.20.1 patch version of this release, due to a bug in 0_1_20**
 
 * Add `encryption.monitor( 'number', myCardField);` to allow fraud prevention data gathering for nodom implementations.
 
