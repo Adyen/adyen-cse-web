@@ -155,7 +155,7 @@ Add to your `package.json`:
 For the current latest release use the following dependency:
 ```
 "dependencies": {
-  "adyen-cse-js": "git+https://github.com/Adyen/adyen-cse-web.git#v0.1.19"
+  "adyen-cse-js": "git+https://github.com/Adyen/adyen-cse-web.git#v0.1.20.1"
 }
 ```
 
