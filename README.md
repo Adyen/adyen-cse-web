@@ -146,7 +146,7 @@ Note that this kind of integration may not be suitable for you, if you want to p
 Add to your `package.json`:
 ```
 "dependencies": {
-  "adyen-cse-web": "git+https://github.com/Adyen/adyen-cse-web.git#v0.1.XX"
+  "adyen-cse-js": "git+https://github.com/Adyen/adyen-cse-web.git#v0.1.XX"
 }
 ```
 
@@ -155,7 +155,7 @@ Add to your `package.json`:
 For the current latest release use the following dependency:
 ```
 "dependencies": {
-  "adyen-cse-web": "git+https://github.com/Adyen/adyen-cse-web.git#v0.1.19"
+  "adyen-cse-js": "git+https://github.com/Adyen/adyen-cse-web.git#v0.1.19"
 }
 ```
 
@@ -164,7 +164,7 @@ Then run `npm install`.
 Now you can use adyen as a regular npm package:
 
 ```js
-var adyenEncrypt = require('adyen-cse-web');
+var adyenEncrypt = require('adyen-cse-js');
 
 var cseInstance = adyenEncrypt.createEncryption(key, options);
 ```
