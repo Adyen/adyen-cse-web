@@ -842,7 +842,7 @@
     
     var EncryptedForm = function ( element, key, options ) {
 
-        if ( typeof element !== 'object' || typeof element.ownerDocument !== 'object' ) {
+        if ( typeof element !== 'object' || (element.ownerDocument && typeof element.ownerDocument !== 'object') ) {
 
             throw new Error( 'Expected target element to be a HTML Form element' );
         }
