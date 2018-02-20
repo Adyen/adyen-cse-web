@@ -101,7 +101,7 @@ require(['adyen/encrypt'], function(adyenEncrypt) {
 
 In case the HTML integration is troublesome in your setup, the library has been split up into two parts since release V0_1_11. The newly introduced part is an HTML-independent encryption.
 
-Note that this kind of integration may not be suitable for you, if you want to perform the **Fraudulent behaviour on payment page** risk check. For more information, refer to [Adyen documentation](https://docs.adyen.com/support/risk-management/revenueprotect-engine-rules/consistency-rules/fraudulent-behaviour-on-payment-page).
+Note that this kind of integration may not be suitable for you, if you want to perform the **Fraudulent behaviour on payment page** risk check. For more information, refer to [Adyen documentation](https://docs.adyen.com/developers/risk-management/revenueprotect-engine-rules/consistency-rules/fraudulent-behaviour-on-payment-page).
 
 *As with all CSE integrations, make sure that no card data is sent to your server unencrypted.*
 
@@ -133,7 +133,7 @@ Note that this kind of integration may not be suitable for you, if you want to p
     }
     
     // Enable behavior tracking on number and CVC fields
-    // Initiate before user interacts with the referenced fields.
+    // Initiate before user interacts with the refeenced fields.
     cseInstance.monitor( 'number', document.getElementById('numberField') );
     cseInstance.monitor( 'cvc', document.getElementById('numberField') );
     
@@ -141,20 +141,12 @@ Note that this kind of integration may not be suitable for you, if you want to p
 </script>
 ```
 
-#### CVC encryption
-To encrypt only the CVC number when updating a card then only the ```cvc``` and ```generationtime``` params need to be passed.
-```javascript
-var cardData = {
-            cvc : cvc,
-            generationtime : generationtime
-        };
-```
 #### Node module
 
 Add to your `package.json`:
 ```
 "dependencies": {
-  "adyen-cse-js": "git+https://github.com/Adyen/adyen-cse-web.git#v0.1.XX"
+  "adyen-cse-web": "git+https://github.com/Adyen/adyen-cse-web.git#v0.1.XX"
 }
 ```
 
@@ -163,7 +155,7 @@ Add to your `package.json`:
 For the current latest release use the following dependency:
 ```
 "dependencies": {
-  "adyen-cse-js": "git+https://github.com/Adyen/adyen-cse-web.git#v0.1.20.1"
+  "adyen-cse-web": "git+https://github.com/Adyen/adyen-cse-web.git#v0.1.19"
 }
 ```
 
@@ -172,14 +164,21 @@ Then run `npm install`.
 Now you can use adyen as a regular npm package:
 
 ```js
-var adyenEncrypt = require('adyen-cse-js');
+var adyenEncrypt = require('adyen-cse-web');
 
 var cseInstance = adyenEncrypt.createEncryption(key, options);
 ```
 
 # Version History
 
-JavaScript version 0_1_20_1
+JavaScript version 0_1_21
+-------
+
+* Improved card type detection for ELO and added card type detection for various other cards
+
+* Reduce strictness of generationtime validation to allow hosted CSE upgrade from 0_1_18 to 0_1_21.
+
+JavaScript version 0_1_20
 -------
 
 * **Warning: Make sure to use the 0.1.20.1 patch version of this release, due to a bug in 0_1_20**

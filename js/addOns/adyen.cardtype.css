@@ -111,3 +111,21 @@
 #cardType.cse-cardtype-warehouse {
     background-image: url(https://live.adyen.com/hpp/img/pm/warehouse_tiny.png);
 }
+#cardType.cse-cardtype-argencard {
+    background-image: url(https://live.adyen.com/hpp/img/pm/argencard_tiny.png);
+}
+#cardType.cse-cardtype-cabal {
+    background-image: url(https://live.adyen.com/hpp/img/pm/cabal_tiny.png);
+}
+#cardType.cse-cardtype-codensa {
+    background-image: url(https://live.adyen.com/hpp/img/pm/codensa_tiny.png);
+}
+#cardType.cse-cardtype-mir {
+    background-image: url(https://live.adyen.com/hpp/img/pm/mir_tiny.png);
+}
+#cardType.cse-cardtype-naranja {
+    background-image: url(https://live.adyen.com/hpp/img/pm/naranja_tiny.png);
+}
+#cardType.cse-cardtype-shopping {
+    background-image: url(https://live.adyen.com/hpp/img/pm/shopping_tiny.png);
+}

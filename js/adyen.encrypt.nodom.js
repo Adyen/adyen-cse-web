@@ -7,7 +7,7 @@
  * * Stanford Javascript Crypto Library | http://crypto.stanford.edu/sjcl/
  * * JSON in JavaScript | http://www.JSON.org/
  * 
- * Version: 0_1_20_1
+ * Version: 0_1_21
  * Author:  ADYEN (c) 2014
 
 <!DOCTYPE html>
@@ -31,7 +31,7 @@
         <!-- N.B. Make sure the library is *NOT* loaded in the "head" of the HTML document -->
         
         
-        <script type="text/javascript" src="js/adyen.encrypt.nodom.min.js?0_1_20_1"></script>
+        <script type="text/javascript" src="js/adyen.encrypt.nodom.min.js?0_1_21"></script>
         <script type="text/javascript">
             
             // the public key
@@ -193,7 +193,7 @@
     encrypt.errors = encrypt.errors || {};
     
 
-    encrypt.version = '0_1_20_1';
+    encrypt.version = '0_1_21';
 
     
 
@@ -306,11 +306,7 @@
         
         var reZone = /(Z|[\+\-][012345][0-9]:?[012345][0-9])$/;
         
-        if (!val.match(reZone)) {
-            return false;
-        }
-        
-        var withoutZoneAndMs = val.replace(reZone, '').replace(/\.\d{3}$/, '');
+        var withoutZoneAndMs = val.replace(reZone, '').replace(/\.\d+$/, '');
         
         return withoutZoneAndMs.match(/^[012345][0-9]:?[012345][0-9]:?[012345][0-9]$/);
     };
@@ -326,6 +322,9 @@
 
     var Encryption = function ( key, options ) {
         try {
+            if(options.randomBytes){
+                sjcl.random.addEntropy(options.randomBytes, 1024, "crypto.randomBytes")
+            }
             sjcl.random.startCollectors();
         } catch ( e ) {
             // what to do?
