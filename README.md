@@ -174,9 +174,9 @@ var cseInstance = adyenEncrypt.createEncryption(key, options);
 JavaScript version 0_1_21
 -------
 
-* Improved card type detection for ELO and added card type detection for various other cards
+* Allow passing of a randomBytes array that can be used to seed the generator
 
-* Reduce strictness of generationtime validation to allow hosted CSE upgrade from 0_1_18 to 0_1_21.
+* Look for presence of getElementsByTagName rather than typeof getElementsByTagName
 
 JavaScript version 0_1_20
 -------
