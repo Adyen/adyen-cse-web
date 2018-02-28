@@ -164,7 +164,7 @@ Then run `npm install`.
 Now you can use adyen as a regular npm package:
 
 ```js
-var adyenEncrypt = require('adyen-cse-web');
+var adyenEncrypt = require('adyen-cse-js');
 
 var cseInstance = adyenEncrypt.createEncryption(key, options);
 ```
