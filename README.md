@@ -134,8 +134,8 @@ Note that this kind of integration may not be suitable for you, if you want to p
     
     // Enable behavior tracking on number and CVC fields
     // Initiate before user interacts with the refeenced fields.
-    cseInstance.monitor( 'number', document.getElementById('numberField') );
-    cseInstance.monitor( 'cvc', document.getElementById('numberField') );
+    cseInstance.monitor( 'number', document.getElementById('adyen-encrypted-form-number') );
+    cseInstance.monitor( 'cvc', document.getElementById('adyen-encrypted-form-cvc') );
     
 })();
 </script>
