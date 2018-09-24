@@ -129,3 +129,9 @@
 #cardType.cse-cardtype-shopping {
     background-image: url(https://live.adyen.com/hpp/img/pm/shopping_tiny.png);
 }
+#cardType.cse-cardtype-troy {
+    background-image: url(https://live.adyen.com/hpp/img/pm/troy.png);
+}
+#cardType.cse-cardtype-korean_local_card {
+    background-image: url(https://live.adyen.com/hpp/img/pm/korean_local_card_tiny.png);
+}

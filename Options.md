@@ -59,7 +59,7 @@ The `createEncryption ( key , `*`options`*` )` and `createEncryptedForm ( form, 
   When no value is supplied, the default '34,37' will be used.
 
 ## Option in createEncryptedForm()
-Supported fields: `enableValidations`, `numberIgnoreNonNumeric`, `cvcIgnoreBins`, `fourDigitCvcForBins`, `submitButtonAlwaysEnabled`, `fieldNameAttribute`, `onsubmit`, `onvalidate`
+Supported fields: `enabledValidations`, `numberIgnoreNonNumeric`, `cvcIgnoreBins`, `fourDigitCvcForBins`, `submitButtonAlwaysEnabled`, `fieldNameAttribute`, `onsubmit`, `onvalidate`
 
 *Example:*
 ```Javascript
@@ -77,13 +77,13 @@ var cseForm = createEncryptedForm ( form, key , {
 When the card type detection addon is being enabled, the `cardTypeElement` option is also supported.
 
 ## Option in createEncryption()
-Currently  `enableValidations`, `numberIgnoreNonNumeric`, `fourDigitCvcForBins` and `cvcIgnoreBins` are supported.
+Currently  `enabledValidations`, `numberIgnoreNonNumeric`, `fourDigitCvcForBins` and `cvcIgnoreBins` are supported.
 
 ```Javascript
 var cse = createEncryption ( key , {
     "enableValidations" : true,
     "numberIgnoreNonNumeric" : true,
-    "cvcIgnoreBins" : "6703",
+    "cvcIgnoreBins" = "6703",
     "fourDigitCvcForBins" : "34,37"
 } );
 ```
