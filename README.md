@@ -171,6 +171,11 @@ var cseInstance = adyenEncrypt.createEncryption(key, options);
 
 # Version History
 
+JavaScript version 0_1_23
+-------
+
+* Options object for createEncryption can contain a boolean: 'stopDeviceFingerprint'. If set to true then device fingerprinting will not happen.
+
 JavaScript version 0_1_22
 -------
 

@@ -7,7 +7,7 @@
  * * Stanford Javascript Crypto Library | http://crypto.stanford.edu/sjcl/
  * * JSON in JavaScript | http://www.JSON.org/
  * 
- * Version: 0_1_22
+ * Version: 0_1_23
  * Author:  ADYEN (c) 2014
 
 <!DOCTYPE html>
@@ -62,8 +62,8 @@
 
         <!-- How to use the Adyen encryption client-side JS library -->
         <!-- N.B. Make sure the library is *NOT* loaded in the "head" of the HTML document -->
-        <script type="text/javascript" src="js/adyen.encrypt.min.js?0_1_22"></script>
-        <!-- <script type="text/javascript" src="js/addOns/adyen.cardtype.min.js?0_1_22"></script>--> 
+        <script type="text/javascript" src="js/adyen.encrypt.min.js?0_1_23"></script>
+        <!-- <script type="text/javascript" src="js/addOns/adyen.cardtype.min.js?0_1_23"></script>--> 
         
         <script type="text/javascript">
             
@@ -139,7 +139,7 @@
 ( function (root, fnDefine) {
     
     // Prevent libraries to die on AMD patterns
-    var define, exports, df = function() {return "";};
+    var define, exports, doDeviceFingerprint = true, df = function() {return "";};
 
     /* typedarray.js */
     (function(){try{var b=[new Uint8Array(1),new Uint32Array(1),new Int32Array(1)];return}catch(g){}function f(e,a){return this.slice(e,a)}function c(j,e){if(arguments.length<2){e=0}for(var a=0,h=j.length;a<h;++a,++e){this[e]=j[a]&255}}function d(e){var a;if(typeof e==="number"){a=new Array(e);for(var h=0;h<e;++h){a[h]=0}}else{a=e.slice(0)}a.subarray=f;a.buffer=a;a.byteLength=a.length;a.set=c;if(typeof e==="object"&&e.buffer){a.buffer=e.buffer}return a}try{window.Uint8Array=d}catch(g){}try{window.Uint32Array=d}catch(g){}try{window.Int32Array=d}catch(g){}})();(function(){try{if(typeof window==="undefined"){return}if("btoa" in window){return}var a="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";window.btoa=function(h){var f="";var g,e;for(g=0,e=h.length;g<e;g+=3){var l=h.charCodeAt(g)&255;var k=h.charCodeAt(g+1)&255;var j=h.charCodeAt(g+2)&255;var d=l>>2,c=((l&3)<<4)|(k>>4);var o=g+1<e?((k&15)<<2)|(j>>6):64;var m=g+2<e?(j&63):64;f+=a.charAt(d)+a.charAt(c)+a.charAt(o)+a.charAt(m)}return f}}catch(b){}})();
@@ -276,7 +276,7 @@
     }
     
 
-    encrypt.version = '0_1_22';
+    encrypt.version = '0_1_23';
 
     
     /*
@@ -452,16 +452,20 @@
     var Encryption = function ( key, options ) {
         try {
             if(options.randomBytes){
-                sjcl.random.addEntropy(options.randomBytes, 1024, "crypto.randomBytes")
+                sjcl.random.addEntropy(options.randomBytes, 1024, "crypto.randomBytes");
             }
             sjcl.random.startCollectors();
         } catch ( e ) {
             // what to do?
         }
-        try {
-            df();
-        } catch (e) {
-            
+
+        if(options.stopDeviceFingerprint === true){// if explicitly set to true
+            doDeviceFingerprint = false;
+        }
+        if(doDeviceFingerprint){
+            try {
+                df();
+            } catch (e) {}
         }
 
         this.key = key;
@@ -617,12 +621,12 @@
 
         evLog('extend', data);
 
-        try {
-            data.dfValue = df();
-        } catch (e) {
-            
+        if(doDeviceFingerprint){
+            try {
+                data.dfValue = df();
+            } catch (e) {}
         }
-        
+
         rsa = this.createRSAKey();
         aes = this.createAESKey();
         
