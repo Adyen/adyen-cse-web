@@ -171,10 +171,23 @@ var cseInstance = adyenEncrypt.createEncryption(key, options);
 
 # Version History
 
+JavaScript version 0_1_24
+-------
+
+* Now possible to send a device fingerprint value to the ```encrypt``` function: 
+
+```
+var cseInstance = adyen.encrypt.createEncryption(key, options);
+cseInstance.encrypt(cardData, dfValue);
+```
+
+This can be used in conjunction with the ```stopDeviceFingerprint``` boolean (from *version 0_1_23*) to prevent the CSE from performing device fingerprinting.
+Instead it can be performed elsewhere and passed into the CSE.
+
 JavaScript version 0_1_23
 -------
 
-* Options object for createEncryption can contain a boolean: 'stopDeviceFingerprint'. If set to true then device fingerprinting will not happen.
+* Options object for createEncryption can contain a boolean: ```stopDeviceFingerprint```. If set to ```true``` then device fingerprinting will ***not*** happen.
 
 JavaScript version 0_1_22
 -------

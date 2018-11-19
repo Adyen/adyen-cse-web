@@ -7,7 +7,7 @@
  * * Stanford Javascript Crypto Library | http://crypto.stanford.edu/sjcl/
  * * JSON in JavaScript | http://www.JSON.org/
  * 
- * Version: 0_1_23
+ * Version: 0_1_24
  * Author:  ADYEN (c) 2014
 
 <!DOCTYPE html>
@@ -31,7 +31,7 @@
         <!-- N.B. Make sure the library is *NOT* loaded in the "head" of the HTML document -->
         
         
-        <script type="text/javascript" src="js/adyen.encrypt.nodom.min.js?0_1_23"></script>
+        <script type="text/javascript" src="js/adyen.encrypt.nodom.min.js?0_1_24"></script>
         <script type="text/javascript">
             
             // the public key
@@ -193,7 +193,7 @@
     encrypt.errors = encrypt.errors || {};
     
 
-    encrypt.version = '0_1_23';
+    encrypt.version = '0_1_24';
 
     
 
@@ -445,7 +445,7 @@
      * 
      */
 
-    Encryption.prototype.encrypt = function ( original ) {
+    Encryption.prototype.encrypt = function ( original, dfValue ) {
 
         var data = {};
         
@@ -496,6 +496,10 @@
             try {
                 data.dfValue = df();
             } catch (e) {}
+        }else{
+            if(dfValue){
+                data.dfValue = dfValue;
+            }
         }
 
         rsa = this.createRSAKey();
