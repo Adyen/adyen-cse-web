@@ -136,15 +136,19 @@
  */
 
 ( function (root, fnDefine) {
-    
-    // Prevent libraries to die on AMD patterns
+
+    // Ensure expected global variables are defined for non-browser environments eg. Node.
+    var document = root.document || undefined;
+    var navigator = root.navigator || {};
+    var window = root.window || undefined;
+
+    // Prevent libraries from dying on AMD patterns
     var define, exports, doDeviceFingerprint = true, df = function() {return "";};
 
     /* typedarray.js */
     (function(){try{var b=[new Uint8Array(1),new Uint32Array(1),new Int32Array(1)];return}catch(g){}function f(e,a){return this.slice(e,a)}function c(j,e){if(arguments.length<2){e=0}for(var a=0,h=j.length;a<h;++a,++e){this[e]=j[a]&255}}function d(e){var a;if(typeof e==="number"){a=new Array(e);for(var h=0;h<e;++h){a[h]=0}}else{a=e.slice(0)}a.subarray=f;a.buffer=a;a.byteLength=a.length;a.set=c;if(typeof e==="object"&&e.buffer){a.buffer=e.buffer}return a}try{window.Uint8Array=d}catch(g){}try{window.Uint32Array=d}catch(g){}try{window.Int32Array=d}catch(g){}})();(function(){try{if(typeof window==="undefined"){return}if("btoa" in window){return}var a="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";window.btoa=function(h){var f="";var g,e;for(g=0,e=h.length;g<e;g+=3){var l=h.charCodeAt(g)&255;var k=h.charCodeAt(g+1)&255;var j=h.charCodeAt(g+2)&255;var d=l>>2,c=((l&3)<<4)|(k>>4);var o=g+1<e?((k&15)<<2)|(j>>6):64;var m=g+2<e?(j&63):64;f+=a.charAt(d)+a.charAt(c)+a.charAt(o)+a.charAt(m)}return f}}catch(b){}})();
 
     /* For older browser make sure to include a shim for the JSON object */
-    
 
     /* base64.js */
     var b64map="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";var b64padchar="=";function hex2b64(d){var b;var e;var a="";for(b=0;b+3<=d.length;b+=3){e=parseInt(d.substring(b,b+3),16);a+=b64map.charAt(e>>6)+b64map.charAt(e&63)}if(b+1==d.length){e=parseInt(d.substring(b,b+1),16);a+=b64map.charAt(e<<2)}else{if(b+2==d.length){e=parseInt(d.substring(b,b+2),16);a+=b64map.charAt(e>>2)+b64map.charAt((e&3)<<4)}}while((a.length&3)>0){a+=b64padchar}return a}function b64tohex(e){var c="";var d;var a=0;var b;for(d=0;d<e.length;++d){if(e.charAt(d)==b64padchar){break}v=b64map.indexOf(e.charAt(d));if(v<0){continue}if(a==0){c+=int2char(v>>2);b=v&3;a=1}else{if(a==1){c+=int2char((b<<2)|(v>>4));b=v&15;a=2}else{if(a==2){c+=int2char(b);c+=int2char(v>>2);b=v&3;a=3}else{c+=int2char((b<<2)|(v>>4));c+=int2char(v&15);a=0}}}}if(a==1){c+=int2char(b<<2)}return c}function b64toBA(e){var d=b64tohex(e);var c;var b=new Array();for(c=0;2*c<d.length;++c){b[c]=parseInt(d.substring(2*c,2*c+2),16)}return b};
