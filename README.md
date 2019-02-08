@@ -1,6 +1,6 @@
 # [DEPRECATED] Adyen CSE for Web
 
-⚠️ This repo is deprecated. Prefer to use https://docs.adyen.com/developers/checkout/api-integration/build-your-own-payment-form#step2collectshopperdetailswithsecuredfields ⚠️
+⚠️ This repo is deprecated. You need to use Secured Fields for more details see https://docs.adyen.com/developers/checkout/api-integration/build-your-own-payment-form#step2collectshopperdetailswithsecuredfields ⚠️
 
 This repository contains a code sample for adding Adyen payments using Client-Side Encryption (CSE). With CSE card data is encrypted on a client side before you submit it through your own server to the Adyen API. By using CSE you reduce your scope of [PCI compliance](https://en.wikipedia.org/wiki/Payment_Card_Industry_Data_Security_Standard), because no raw card data travels through your server. 
 
