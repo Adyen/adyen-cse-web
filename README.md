@@ -2,7 +2,7 @@
 
 ⚠️ This repository is deprecated!
 
-To keep all merchants using the Adyen integration safe and secure, we’re excited to announce a better solution with Secured Fields https://docs.adyen.com/developers/checkout/api-integration/build-your-own-payment-form#step2collectshopperdetailswithsecuredfields 
+To keep all merchants using the Adyen integration safe and secure, we’re excited to announce a better solution with Secured Fields https://docs.adyen.com/developers/checkout/api-integration
 
 Adyen’s Secure Fields integration shifts the encryption of data out of your scope towards us. 
 
